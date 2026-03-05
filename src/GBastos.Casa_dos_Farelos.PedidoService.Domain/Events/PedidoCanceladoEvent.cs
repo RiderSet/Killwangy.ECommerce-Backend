@@ -7,6 +7,9 @@ public class PedidoCanceladoEvent : IDomainEvent
     public Guid PedidoId { get; }
     public Guid ClienteId { get; }
 
+    public Guid EventId => Guid.NewGuid();
+    public DateTime OccurredOnUtc => DateTime.UtcNow;
+
     public PedidoCanceladoEvent(Guid pedidoId, Guid clienteId)
     {
         PedidoId = pedidoId;

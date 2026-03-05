@@ -1,5 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Interfaces;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.IntegrationEvents;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.Shared.Interfaces;
+using GBastos.Casa_dos_Farelos.SharedKernel.IntegrationEvents.Pagamentos;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Outbox;
 
@@ -13,8 +14,8 @@ public sealed class IntegrationEventOutbox : IIntegrationEventOutbox
         _repository = repository;
     }
 
-    public async Task AddAsync(PagamentoAprovadoIntegrationEvent integrationEvent, CancellationToken cancellationToken)
+    public Task AddAsync(PagamentoAprovadoIntegrationEvent integrationEvent, CancellationToken cancellationToken = default)
     {
-        await _repository.AddAsync(integrationEvent, cancellationToken);
+        throw new NotImplementedException();
     }
 }

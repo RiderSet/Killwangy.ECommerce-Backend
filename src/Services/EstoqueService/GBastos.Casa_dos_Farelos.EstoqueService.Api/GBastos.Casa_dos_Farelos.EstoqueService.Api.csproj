@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\GBastos.Casa_dos_Farelos.PedidoService.Application\GBastos.Casa_dos_Farelos.PedidoService.Application.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Application\GBastos.Casa_dos_Farelos.EstoqueService.Application.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.csproj" />
   </ItemGroup>

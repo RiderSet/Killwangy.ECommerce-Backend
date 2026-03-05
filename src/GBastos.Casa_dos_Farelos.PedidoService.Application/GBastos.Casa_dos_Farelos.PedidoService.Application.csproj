@@ -14,8 +14,4 @@
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.PedidoService.Domain\GBastos.Casa_dos_Farelos.PedidoService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Handlers\" />
-  </ItemGroup>
-
 </Project>

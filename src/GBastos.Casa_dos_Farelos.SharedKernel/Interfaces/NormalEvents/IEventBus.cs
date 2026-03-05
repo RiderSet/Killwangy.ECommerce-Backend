@@ -1,10 +1,16 @@
-﻿using GBastos.Casa_dos_Farelos.Shared.Interfaces;
+﻿using GBastos.Casa_dos_Farelos.Domain.Interfaces;
+using GBastos.Casa_dos_Farelos.Shared.Interfaces;
 
 namespace GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 
 public interface IEventBus
 {
-    Task Publish<T>(T @event, CancellationToken ct = default) where T : class;
-    Task Publish(object @event, CancellationToken ct = default);
-    Task PublishAsync(IIntegrationEvent integrationEvent, CancellationToken ct);
+    Task PublishAsync<TEvent>(
+        TEvent integrationEvent,
+        CancellationToken ct = default)
+        where TEvent : class, IIntegrationEvent;
+
+    void Subscribe<TEvent, THandler>()
+        where TEvent : class, IIntegrationEvent
+        where THandler : class, IIntegrationEventHandler<TEvent>;
 }

@@ -1,8 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Common;
+﻿using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Common;
 using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Enums;
 using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Events.Pagamentos;
-using GBastos.Casa_dos_Farelos.PedidoService.Domain.Aggregates;
 
 namespace GBastos.Casa_dos_Farelos.PagamentoService.Domain.Aggregates;
 
@@ -21,9 +19,6 @@ public sealed class Pagamento : AggregateRoot
     public DateTime? ProcessadoEmUtc { get; private set; }
 
     public StatusPagamento Status { get; private set; }
-
-    public Pedido Pedido { get; private set; } = null!;
-    public Cliente Cliente { get; private set; } = null!;
 
     private Pagamento() { }
 
@@ -118,7 +113,7 @@ public sealed class Pagamento : AggregateRoot
             moeda: "BRL");
     }
 
-    internal void PublishDomainEvents()
+    public void PublishDomainEvents()
     {
         throw new NotImplementedException();
     }

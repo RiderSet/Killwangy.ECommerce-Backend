@@ -13,6 +13,12 @@
   <ItemGroup>
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.ComprasService.Application\GBastos.Casa_dos_Farelos.ComprasService.Application.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.ComprasService.Domain\GBastos.Casa_dos_Farelos.ComprasService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

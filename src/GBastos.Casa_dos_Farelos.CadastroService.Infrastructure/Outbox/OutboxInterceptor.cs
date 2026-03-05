@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Outbox;

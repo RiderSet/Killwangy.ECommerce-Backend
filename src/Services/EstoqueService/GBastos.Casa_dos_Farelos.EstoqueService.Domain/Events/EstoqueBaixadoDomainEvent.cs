@@ -1,22 +1,14 @@
 ﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Domain.Events;
 
-public sealed class EstoqueBaixadoDomainEvent : IDomainEvent
+public sealed record EstoqueBaixadoDomainEvent(
+    Guid ProdutoId,
+    string NomeProduto,
+    int Quantidade
+) : IDomainEvent, INotification
 {
-    public Guid ProdutoId { get; }
-    public string NomeProduto { get; }
-    public int QuantidadeBaixada { get; }
-    public DateTime OccurredOn { get; }
-
-    public EstoqueBaixadoDomainEvent(
-        Guid produtoId,
-        string nomeProduto,
-        int quantidadeBaixada)
-    {
-        ProdutoId = produtoId;
-        NomeProduto = nomeProduto;
-        QuantidadeBaixada = quantidadeBaixada;
-        OccurredOn = DateTime.UtcNow;
-    }
+    public Guid EventId => Guid.NewGuid();
+    public DateTime OccurredOnUtc => DateTime.UtcNow;
 }

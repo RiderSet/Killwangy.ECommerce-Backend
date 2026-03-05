@@ -1,3 +1,9 @@
-﻿namespace GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+﻿using MediatR;
 
-public interface IDomainEvent{}
+namespace GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+
+public interface IDomainEvent : INotification
+{
+    Guid EventId { get; }
+    DateTime OccurredOnUtc { get; }
+}

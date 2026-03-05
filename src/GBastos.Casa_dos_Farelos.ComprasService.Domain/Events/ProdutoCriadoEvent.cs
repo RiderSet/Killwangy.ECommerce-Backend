@@ -2,12 +2,12 @@
 
 namespace GBastos.Casa_dos_Farelos.ComprasService.Domain.Events;
 
-public record ProdutoCriadoEvent(
+public sealed record ProdutoCriadoEvent(
     Guid ProdutoId,
     string Nome,
     decimal PrecoVenda
 ) : IDomainEvent
 {
-    public Guid EventId => Guid.NewGuid();
-    public DateTime OccurredOnUtc => DateTime.UtcNow;
+    public Guid EventId { get; } = Guid.NewGuid();
+    public DateTime OccurredOnUtc { get; } = DateTime.UtcNow;
 }

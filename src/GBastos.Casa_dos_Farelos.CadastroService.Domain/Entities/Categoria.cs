@@ -1,7 +1,8 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
 using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
 
-namespace GBastos.Casa_dos_Farelos.Domain.Entities;
+namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 
 public class Categoria : BaseEntity
 {

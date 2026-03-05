@@ -10,13 +10,27 @@ public static class MassTransitConfig
         this IServiceCollection services,
         IConfiguration config)
     {
-        object value = services.AddMassTransit(x =>
+        var host = config["RabbitMQ:Host"]
+            ?? throw new InvalidOperationException("RabbitMQ Host não configurado");
+
+        var user = config["RabbitMQ:User"]
+            ?? throw new InvalidOperationException("RabbitMQ User não configurado");
+
+        var password = config["RabbitMQ:Password"]
+            ?? throw new InvalidOperationException("RabbitMQ Password não configurado");
+
+        services.AddMassTransit(x =>
         {
             x.SetKebabCaseEndpointNameFormatter();
 
             x.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(config["RabbitMQ:Host"]);
+                cfg.Host(host, "/", h =>
+                {
+                    h.Username(user);
+                    h.Password(password);
+                });
+
                 cfg.ConfigureEndpoints(ctx);
             });
         });

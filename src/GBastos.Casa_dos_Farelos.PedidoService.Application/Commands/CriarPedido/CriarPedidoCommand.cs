@@ -2,5 +2,5 @@
 
 public class CriarPedidoCommand
 {
-    public object ClienteId { get; internal set; }
+    public Guid ClienteId { get; internal set; }
 }

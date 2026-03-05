@@ -1,0 +1,109 @@
+
+
+ComprasService
+│
+├── Application
+│   ├── Commands
+│   │   ├── CriarCompra
+│   │   │   ├── CriarCompraCommand.cs
+│   │   │   ├── CriarCompraHandler.cs
+│   │   │   └── CriarCompraValidator.cs
+│   │   │
+│   │   ├── CancelarCompra
+│   │   │   ├── CancelarCompraCommand.cs
+│   │   │   └── CancelarCompraHandler.cs
+│   │
+│   ├── Queries
+│   │   ├── ObterCompraPorId
+│   │   │   ├── ObterCompraPorIdQuery.cs
+│   │   │   └── ObterCompraPorIdHandler.cs
+│   │
+│   ├── DTOs
+│   │   ├── CompraDTO.cs
+│   │   └── CompraItemDTO.cs
+│   │
+│   ├── Interfaces
+│   │   ├── ICompraRepository.cs
+│   │   ├── ICompraUnitOfWork.cs
+│   │   └── ICompraReadRepository.cs
+│   │
+│   └── DependencyInjection.cs
+│
+│
+├── Domain
+│   │
+│   ├── Entities
+│   │   ├── Compra.cs
+│   │   └── CompraItem.cs
+│   │
+│   ├── Enums
+│   │   └── StatusCompra.cs
+│   │
+│   ├── ValueObjects
+│   │   └── Dinheiro.cs
+│   │
+│   ├── Events
+│   │   ├── CompraCriadaDomainEvent.cs
+│   │   ├── CompraCanceladaDomainEvent.cs
+│   │   └── CompraFinalizadaDomainEvent.cs
+│   │
+│   ├── Services
+│   │   └── CompraDomainService.cs
+│   │
+│   └── Specifications
+│       └── CompraAtivaSpecification.cs
+│
+│
+├── Infrastructure
+│   │
+│   ├── Persistence
+│   │   │
+│   │   ├── Context
+│   │   │   └── ComprasDbContext.cs
+│   │   │
+│   │   ├── Configurations
+│   │   │   ├── CompraConfiguration.cs
+│   │   │   └── CompraItemConfiguration.cs
+│   │   │
+│   │   └── Migrations
+│   │
+│   ├── Repository
+│   │   ├── CompraRepository.cs
+│   │   └── CompraReadRepository.cs
+│   │
+│   ├── UOW
+│   │   └── CompraUnitOfWork.cs
+│   │
+│   ├── Outbox
+│   │   ├── CompraOutboxMessage.cs
+│   │   └── CompraOutboxRepository.cs
+│   │
+│   └── DependencyInjection.cs
+│
+│
+├── IntegrationEvents
+│   │
+│   ├── CompraCriadaIntegrationEvent.cs
+│   ├── CompraCanceladaIntegrationEvent.cs
+│   └── CompraFinalizadaIntegrationEvent.cs
+│
+│
+├── Consumers
+│   │
+│   ├── Estoque
+│   │   └── ProdutoReservadoConsumer.cs
+│   │
+│   └── Pagamento
+│       └── PagamentoAprovadoConsumer.cs
+│
+│
+└── API
+    │
+    ├── Controllers
+    │   └── ComprasController.cs
+    │
+    ├── Contracts
+    │   ├── CriarCompraRequest.cs
+    │   └── CancelarCompraRequest.cs
+    │
+    └── DependencyInjection.cs

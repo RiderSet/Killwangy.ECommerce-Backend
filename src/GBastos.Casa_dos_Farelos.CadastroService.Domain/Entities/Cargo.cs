@@ -4,6 +4,7 @@ namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 
 public sealed class Cargo : Entity<Guid>
 {
+
     public string Nome { get; private set; } = string.Empty;
     public string? Descricao { get; private set; }
     public bool Ativo { get; private set; }

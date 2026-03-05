@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
+using GBastos.Casa_dos_Farelos.Messaging.RabbitMqPublisher;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
@@ -18,11 +21,15 @@ public class OutboxProcessor : BackgroundService
         {
             using var scope = _sp.CreateScope();
 
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var db = scope.ServiceProvider.GetRequiredService<ComprasDbContext>();
             var publisher = scope.ServiceProvider.GetRequiredService<RabbitMqPublisher>();
 
+            var lockId = Guid.NewGuid();
+
             var messages = await db.OutboxMessages
-                .Where(x => x.ProcessedOnUtc == null)
+                .Where(x => x.ProcessedOnUtc == null &&
+                            (x.LockedUntilUtc == null ||
+                             x.LockedUntilUtc < DateTime.UtcNow))
                 .OrderBy(x => x.OccurredOnUtc)
                 .Take(20)
                 .ToListAsync(stoppingToken);
@@ -31,10 +38,16 @@ public class OutboxProcessor : BackgroundService
             {
                 try
                 {
+                    msg.Lock(lockId, TimeSpan.FromSeconds(30));
+
                     await publisher.PublishAsync(
-                        msg.EventName,
-                        msg.Payload,
-                        stoppingToken);
+                        queueName: msg.Type,
+                        message: msg.Payload,
+                        messageId: msg.Id,
+                        eventType: msg.Type,
+                        occurredOnUtc: msg.OccurredOnUtc,
+                        version: 1,
+                        ct: stoppingToken);
 
                     msg.MarkAsProcessed();
                 }
@@ -45,7 +58,8 @@ public class OutboxProcessor : BackgroundService
             }
 
             await db.SaveChangesAsync(stoppingToken);
-            await Task.Delay(2000, stoppingToken);
+
+            await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
         }
     }
 }

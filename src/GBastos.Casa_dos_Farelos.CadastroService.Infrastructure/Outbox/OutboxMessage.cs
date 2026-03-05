@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Common;
+﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
 using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 using System.Text.Json;
 
@@ -13,8 +13,6 @@ public sealed class OutboxMessage : BaseEntity
     public int Attempts { get; private set; }
     public string? Error { get; private set; }
     public int RetryCount { get; private set; }
-
-    // Controle de concorrência
     public Guid? LockId { get; private set; }
     public DateTime? LockedUntilUtc { get; private set; }
 
@@ -22,12 +20,12 @@ public sealed class OutboxMessage : BaseEntity
 
     private OutboxMessage(
         Guid id,
-        string eventType,
+        string type,
         string payload,
         DateTime occurredOnUtc)
     {
         Id = id;
-        Type = eventType;
+        Type = type;
         Payload = payload;
         OccurredOnUtc = occurredOnUtc;
     }
@@ -36,7 +34,7 @@ public sealed class OutboxMessage : BaseEntity
     {
         return new OutboxMessage(
             Guid.NewGuid(),
-            domainEvent.GetType().AssemblyQualifiedName!,
+            domainEvent.GetType().Name,
             JsonSerializer.Serialize(domainEvent),
             domainEvent.OccurredOnUtc
         );
@@ -46,7 +44,7 @@ public sealed class OutboxMessage : BaseEntity
     {
         return new OutboxMessage(
             Guid.NewGuid(),
-            integrationEvent.GetType().AssemblyQualifiedName!,
+            integrationEvent.GetType().Name,
             JsonSerializer.Serialize(integrationEvent),
             DateTime.UtcNow
         );
@@ -58,11 +56,14 @@ public sealed class OutboxMessage : BaseEntity
         Error = null;
     }
 
-    public void MarkFailed(string error)
+    public void MarkAsFailed(string message)
     {
         Attempts++;
-        Error = error;
+        RetryCount++;
+        Error = message;
     }
+
+    public bool IsProcessed => ProcessedOnUtc.HasValue;
 
     public void Lock(Guid lockId, TimeSpan duration)
     {
@@ -76,7 +77,11 @@ public sealed class OutboxMessage : BaseEntity
         LockedUntilUtc = null;
     }
 
-    public bool IsProcessed => ProcessedOnUtc.HasValue;
-
-    public JsonDocument Content { get; set; }
+    public void MarkFailed(string message)
+    {
+        Attempts++;
+        RetryCount++;
+        Error = message;
+        Unlock();
+    }
 }

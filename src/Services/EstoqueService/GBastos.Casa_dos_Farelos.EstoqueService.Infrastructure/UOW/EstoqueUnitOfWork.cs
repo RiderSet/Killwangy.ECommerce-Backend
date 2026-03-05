@@ -1,34 +1,62 @@
 ﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
-using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Outbox;
 using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Persistence.Context;
-using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.UOW;
 
 public sealed class EstoqueUnitOfWork : IEstoqueUnitOfWork
 {
     private readonly EstoqueDbContext _context;
+    private IDbContextTransaction? _transaction;
 
-    public EstoqueUnitOfWork(EstoqueDbContext context)
+    public EstoqueUnitOfWork(
+        EstoqueDbContext context,
+        IReservaRepository reservas,
+        IIdempotencyRepository idempotency,
+        IOutboxRepository outbox)
     {
         _context = context;
+
+        Reservas = reservas;
+        Idempotency = idempotency;
+        Outbox = outbox;
     }
 
-    public IReservaRepository Reservas =>
-        new ReservaRepository(_context);
-
-    public IOutboxRepository Outbox =>
-        new OutboxRepository(_context);
-
-    public IIdempotencyRepository Idempotency =>
-        new IdempotencyRepository(_context);
+    public IReservaRepository Reservas { get; }
+    public IOutboxRepository Outbox { get; }
+    public IIdempotencyRepository Idempotency { get; }
 
     public async Task BeginTransactionAsync(CancellationToken ct)
-        => await _context.Database.BeginTransactionAsync(ct);
+    {
+        if (_transaction != null)
+            return;
+
+        _transaction = await _context.Database.BeginTransactionAsync(ct);
+    }
 
     public async Task CommitAsync(CancellationToken ct)
-        => await _context.Database.CommitTransactionAsync(ct);
+    {
+        if (_transaction == null)
+            return;
 
-    public async Task SaveChangesAsync(CancellationToken ct)
-        => await _context.SaveChangesAsync(ct);
+        await _context.SaveChangesAsync(ct);
+        await _transaction.CommitAsync(ct);
+        await _transaction.DisposeAsync();
+
+        _transaction = null;
+    }
+
+    public async Task RollbackAsync(CancellationToken ct)
+    {
+        if (_transaction == null)
+            return;
+
+        await _transaction.RollbackAsync(ct);
+        await _transaction.DisposeAsync();
+
+        _transaction = null;
+    }
+
+    public Task<int> SaveChangesAsync(CancellationToken ct)
+        => _context.SaveChangesAsync(ct);
 }

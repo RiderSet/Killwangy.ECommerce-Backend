@@ -1,41 +1,45 @@
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public static class EventEndpoints
 {
-    app.MapOpenApi();
-}
+    public static IEndpointRouteBuilder MapEventEndpoints(
+        this IEndpointRouteBuilder endpoints)
+    {
+        var group = endpoints.MapGroup("/events")
+            .WithTags("Events");
 
-app.UseHttpsRedirection();
+        group.MapPost("/publish", PublishAsync);
+        group.MapPost("/subscribe", Subscribe);
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        return endpoints;
+    }
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    private static async Task<IResult> PublishAsync(
+        PublishEventRequest request,
+        IEventBus eventBus,
+        CancellationToken ct)
+    {
+        var integrationEvent = new GenericIntegrationEvent
+        {
+            Name = request.Name,
+            Payload = request.Payload
+        };
 
-app.Run();
+        await eventBus.PublishAsync(integrationEvent, ct);
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        return Results.Ok(new
+        {
+            Message = "Evento publicado com sucesso",
+            integrationEvent.Id,
+            integrationEvent.EventType,
+            integrationEvent.OccurredOnUtc
+        });
+    }
+
+    private static IResult Subscribe(IEventBus eventBus)
+    {
+        eventBus.Subscribe<
+            GenericIntegrationEvent,
+            GenericIntegrationEventHandler>();
+
+        return Results.Ok("Subscription registrada.");
+    }
 }

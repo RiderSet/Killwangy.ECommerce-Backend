@@ -6,4 +6,8 @@ public record EstoqueBaixadoDomainEvent(
     Guid ProdutoId,
     string NomeProduto,
     int QuantidadeBaixada
-) : IDomainEvent{}
+) : IDomainEvent
+{
+    public Guid EventId => Guid.NewGuid();
+    public DateTime OccurredOnUtc => DateTime.UtcNow;
+}

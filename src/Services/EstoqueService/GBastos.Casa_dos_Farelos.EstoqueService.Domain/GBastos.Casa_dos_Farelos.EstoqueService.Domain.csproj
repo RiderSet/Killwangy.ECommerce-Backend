@@ -11,11 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DomainEvents\" />
-    <Folder Include="ValueObjects\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\GBastos.Casa_dos_Farelos.SharedKernel\GBastos.Casa_dos_Farelos.SharedKernel.csproj" />
   </ItemGroup>
 

@@ -8,7 +8,7 @@ public abstract class Cliente : AggregateRoot<Guid>
     public string Telefone { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
 
-    protected Cliente() : base(Guid.Empty) { } // EF Core
+    protected Cliente() : base(Guid.Empty) { }
 
     protected Cliente(
         Guid id,

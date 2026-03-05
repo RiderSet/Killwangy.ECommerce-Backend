@@ -1,6 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Interfaces;
-
-namespace GBastos.Casa_dos_Farelos.PagamentoService.Application.Interfaces;
+﻿namespace GBastos.Casa_dos_Farelos.PagamentoService.Application.Interfaces;
 
 public interface IPgServiceUnitOfWork
 {

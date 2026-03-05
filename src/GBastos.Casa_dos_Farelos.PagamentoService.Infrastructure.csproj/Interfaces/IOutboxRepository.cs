@@ -1,6 +1,6 @@
 ﻿using GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.Outbox;
 
-namespace GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.Interfaces;
+namespace GBastos.Casa_dos_Farelos.PagamentoService.Application.Interfaces;
 
 public interface IOutboxRepository
 {
@@ -17,7 +17,7 @@ public interface IOutboxRepository
         string error,
         CancellationToken ct);
 
-    Task AddAsync<T>(
-        T @event,
+    Task AddAsync(
+        OutboxMessagePG message,
         CancellationToken ct);
 }

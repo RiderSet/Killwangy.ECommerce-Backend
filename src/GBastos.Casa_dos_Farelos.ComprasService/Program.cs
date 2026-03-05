@@ -1,45 +1,39 @@
-using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
+using GBastos.Casa_dos_Farelos.ComprasService.Api.Endpoints;
+using GBastos.Casa_dos_Farelos.ComprasService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Repository;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.UOW;
+using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var services = builder.Services;
+var configuration = builder.Configuration;
 
-builder.Services.AddHostedService<OutboxBackgroundService>();
+services.AddEndpointsApiExplorer();
+
+services.AddSwaggerGen();
+
+services.AddDbContext<ComprasDbContext>(options =>
+{
+    options.UseSqlServer(
+        configuration.GetConnectionString("DefaultConnection"));
+});
+
+services.AddScoped<ICompraRepository, CompraRepository>();
+services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapCompraEndpoints();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

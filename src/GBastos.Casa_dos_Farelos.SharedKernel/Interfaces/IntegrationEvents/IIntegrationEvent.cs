@@ -1,6 +1,7 @@
-﻿namespace GBastos.Casa_dos_Farelos.Shared.Interfaces;
+﻿using MediatR;
+namespace GBastos.Casa_dos_Farelos.Shared.Interfaces;
 
-public interface IIntegrationEvent
+public interface IIntegrationEvent : INotification
 {
     Guid Id { get; }
     DateTime OccurredOnUtc { get; }

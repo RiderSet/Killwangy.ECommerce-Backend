@@ -1,5 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Interfaces;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.IntegrationEvents;
+﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.Shared.Interfaces;
+using GBastos.Casa_dos_Farelos.SharedKernel.IntegrationEvents.Pagamentos;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Outbox;
 

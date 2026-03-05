@@ -1,4 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities;
+﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,43 +17,58 @@ public class EstoqueDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        ConfigureOutbox(builder);
+        ConfigureIdempotency(builder);
+        ConfigureReserva(builder);
+
+        base.OnModelCreating(builder);
+    }
+
+    private static void ConfigureOutbox(ModelBuilder builder)
+    {
         builder.Entity<OutboxMessage>(b =>
         {
             b.HasKey(x => x.Id);
-            b.Property(x => x.Type).IsRequired();
-            b.Property(x => x.Payload).IsRequired();
-            b.HasIndex(x => x.ProcessedOnUtc);
-        });
 
+            b.Property(x => x.Type)
+                .IsRequired();
+
+            b.Property(x => x.Payload)
+                .IsRequired();
+
+            b.HasIndex(x => x.ProcessedOnUtc);
+            b.HasIndex(x => x.Attempts);
+        });
+    }
+
+    private static void ConfigureIdempotency(ModelBuilder builder)
+    {
         builder.Entity<IdempotencyKey>(b =>
         {
             b.HasKey(x => x.Id);
-            b.HasIndex(x => x.Key).IsUnique();
-            b.Property(x => x.Key).IsRequired();
-        }); 
-        
+
+            b.Property(x => x.Key)
+                .IsRequired();
+
+            b.HasIndex(x => x.Key)
+                .IsUnique();
+        });
+    }
+
+    private static void ConfigureReserva(ModelBuilder builder)
+    {
         builder.Entity<Reserva>(b =>
         {
             b.HasKey(x => x.Id);
+
             b.Property(x => x.RowVersion)
                 .IsRowVersion();
+
             b.Property(x => x.Quantidade)
                 .IsRequired();
+
             b.HasIndex(x => x.ProdutoId);
             b.HasIndex(x => x.ExpiraEm);
         });
-
-        builder.Entity<OutboxMessage>(b =>
-        {
-            b.HasKey(x => x.Id);
-
-            b.HasIndex(x => x.ProcessedOnUtc);
-            b.HasIndex(x => x. RetryCount);
-
-            b.Property(x => x.Type).IsRequired();
-            b.Property(x => x.Payload).IsRequired();
-        });
-
-        base.OnModelCreating(builder);
     }
 }

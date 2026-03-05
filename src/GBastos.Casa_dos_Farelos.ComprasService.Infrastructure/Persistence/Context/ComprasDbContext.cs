@@ -1,17 +1,18 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Outbox;
+﻿using GBastos.Casa_dos_Farelos.ComprasService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 
-namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Persistence.Context;
+namespace GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
 
 public class ComprasDbContext : DbContext
 {
-    public DbSet<Pedido> Pedidos => Set<Pedido>();
-    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
-
     public ComprasDbContext(DbContextOptions<ComprasDbContext> options)
         : base(options)
     {
     }
+
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    public DbSet<Compra> Compras => Set<Compra>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

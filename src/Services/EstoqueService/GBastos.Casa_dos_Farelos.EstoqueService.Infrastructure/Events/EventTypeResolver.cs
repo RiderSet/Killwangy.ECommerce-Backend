@@ -1,4 +1,5 @@
 ﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 using System.Collections.Concurrent;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Events;

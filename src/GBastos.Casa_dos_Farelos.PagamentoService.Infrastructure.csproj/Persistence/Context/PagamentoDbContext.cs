@@ -1,8 +1,9 @@
 ﻿using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Common;
+using GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.Extensions;
 using GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.Inbox;
 using GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.Outbox;
 using GBastos.Casa_dos_Farelos.PedidoService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
 using MassTransit.Mediator;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,10 +42,12 @@ public sealed class PagamentoDbContext : DbContext
 
         var result = await base.SaveChangesAsync(cancellationToken);
 
-        foreach (var domainEvent in domainEvents)
-        {
-            await _mediator.Publish(domainEvent, cancellationToken);
-        }
+        //foreach (var domainEvent in domainEvents)
+        //{
+        //    await _mediator.Publish(domainEvent, cancellationToken);
+        //}
+
+        await _mediator.PublishDomainEventsAsync(this);
 
         return result;
     }

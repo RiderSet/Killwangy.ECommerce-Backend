@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Persistence.Context;
+using GBastos.Casa_dos_Farelos.Messaging.RabbitMqPublisher;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Outbox;
 
@@ -17,7 +21,7 @@ public class OutboxProcessor : BackgroundService
         {
             using var scope = _sp.CreateScope();
 
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var db = scope.ServiceProvider.GetRequiredService<EstoqueDbContext>();
             var publisher = scope.ServiceProvider.GetRequiredService<RabbitMqPublisher>();
 
             var messages = await db.OutboxMessages
@@ -31,8 +35,12 @@ public class OutboxProcessor : BackgroundService
                 try
                 {
                     await publisher.PublishAsync(
-                        msg.EventName,
+                        msg.Type,
                         msg.Payload,
+                        msg.Id,
+                        msg.Type,
+                        msg.OccurredOnUtc,
+                        msg.Version,
                         stoppingToken);
 
                     msg.MarkAsProcessed();
@@ -44,7 +52,8 @@ public class OutboxProcessor : BackgroundService
             }
 
             await db.SaveChangesAsync(stoppingToken);
-            await Task.Delay(2000, stoppingToken);
+
+            await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
         }
     }
 }

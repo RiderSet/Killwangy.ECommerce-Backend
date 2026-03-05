@@ -36,6 +36,30 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+        
+  mysql:
+    image: mysql:8.0
+    container_name: casa_dos_farelos_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: casa_dos_farelos_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
 volumes:
   sql_data:

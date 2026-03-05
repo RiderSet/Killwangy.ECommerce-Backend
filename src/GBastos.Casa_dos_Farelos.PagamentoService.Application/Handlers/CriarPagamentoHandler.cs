@@ -1,7 +1,9 @@
 ﻿using GBastos.Casa_dos_Farelos.PagamentoService.Application.Commands;
 using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Aggregates;
 using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Interfaces;
+using GBastos.Casa_dos_Farelos.SharedKernel.Persistence;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace GBastos.Casa_dos_Farelos.PagamentoService.Handlers;
 
@@ -26,33 +28,21 @@ public class CriarPagamentoHandler
         CriarPagamentoCommand request,
         CancellationToken cancellationToken)
     {
-        using var transaction =
-            await _uow.BeginTransactionAsync(cancellationToken);
+        var pagamento = Pagamento.CriarPagamento(
+            request.PedidoId,
+            request.ClienteId,
+            request.Valor,
+            request.MetodoPagamento,
+            request.Moeda);
 
-        try
-        {
-            var pagamento = Pagamento.CriarPagamento(
-                request.PedidoId,
-                request.ClienteId,
-                request.Valor,
-                request.MetodoPagamento,
-                request.Moeda);
+        pagamento.AddIdempotencyKey(request.IdempotencyKey);
 
-            pagamento.AddIdempotencyKey(request.IdempotencyKey);
+        await _repository.AddAsync(pagamento, cancellationToken);
 
-            await _repository.AddAsync(pagamento, cancellationToken);
-            await _uow.CommitAsync(cancellationToken);
+        await _uow.CommitAsync(cancellationToken);
 
-            pagamento.PublishDomainEvents();
+        pagamento.PublishDomainEvents();
 
-            await transaction.CommitAsync(cancellationToken);
-
-            return pagamento.Id;
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
+        return pagamento.Id;
     }
 }

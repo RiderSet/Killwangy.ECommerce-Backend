@@ -11,7 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.Messaging\GBastos.Casa_dos_Farelos.Messaging.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.SharedKernel\GBastos.Casa_dos_Farelos.SharedKernel.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>

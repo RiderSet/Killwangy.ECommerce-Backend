@@ -1,10 +1,8 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+﻿using GBastos.Casa_dos_Farelos.SharedKernel.IntegrationEvents.General;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Application.IntegrationEvents;
 
-public sealed class ProdutoCriadoIntegrationEvent : IntegrationEvent
+public sealed record ProdutoCriadoIntegrationEvent(Guid ProdutoId, decimal PrecoVenda) : IntegrationEvent
 {
-    public Guid ProdutoId { get; init; }
     public string Nome { get; init; } = default!;
-    public decimal PrecoVenda { get; init; }
 }

@@ -59,4 +59,40 @@ public class Carrinho : AggregateRoot<Guid>
     }
 
     public void Limpar() => _itens.Clear();
+
+    protected override void ValidateInvariants()
+    {
+        if (Id == Guid.Empty)
+            throw new DomainException("Id do carrinho inválido.");
+
+        if (ClienteId == Guid.Empty)
+            throw new DomainException("Cliente inválido.");
+
+        if (CriadoEm == default)
+            throw new DomainException("Data de criação inválida.");
+
+        if (_itens is null)
+            throw new DomainException("Lista de itens inválida.");
+
+        if (_itens.Any(i => i == null))
+            throw new DomainException("Carrinho contém item inválido.");
+
+        foreach (var item in _itens)
+        {
+            if (item.ProdutoId == Guid.Empty)
+                throw new DomainException("Item com produto inválido.");
+
+            if (string.IsNullOrWhiteSpace(item.Nome))
+                throw new DomainException("Item com nome inválido.");
+
+            if (item.PrecoUnitario <= 0)
+                throw new DomainException("Item com preço inválido.");
+
+            if (item.Quantidade <= 0)
+                throw new DomainException("Item com quantidade inválida.");
+        }
+
+        if (Total < 0)
+            throw new DomainException("Total do carrinho inválido.");
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces;
+
+namespace GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
 
 public abstract class Entity<TId> : IEntity, IEquatable<Entity<TId>>
     where TId : notnull

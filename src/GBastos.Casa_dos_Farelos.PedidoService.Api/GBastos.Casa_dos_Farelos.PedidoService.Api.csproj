@@ -10,4 +10,10 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.13" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.Messaging\GBastos.Casa_dos_Farelos.Messaging.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.PedidoService.Domain\GBastos.Casa_dos_Farelos.PedidoService.Domain.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.SharedKernel\GBastos.Casa_dos_Farelos.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Common;
+﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.SharedKernel.IntegrationEvents.Pagamentos;
+using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 using System.Text.Json;
 
 namespace GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.Outbox;
@@ -9,6 +11,7 @@ public sealed class OutboxMessagePG : BaseEntity
     public string Type { get; private set; } = null!;
     public string Payload { get; private set; } = null!;
     public DateTime? ProcessedOnUtc { get; private set; }
+    public DateTime? NextRetryAtUtc { get; private set; }
     public int Attempts { get; private set; }
     public string? Error { get; private set; }
     public int RetryCount { get; private set; }
@@ -37,7 +40,7 @@ public sealed class OutboxMessagePG : BaseEntity
             Guid.NewGuid(),
             integrationEvent.GetType().AssemblyQualifiedName!,
             JsonSerializer.Serialize(integrationEvent),
-            integrationEvent.CriadoEmUtc
+            integrationEvent.OccurredOnUtc
         );
     }
 
@@ -73,6 +76,11 @@ public sealed class OutboxMessagePG : BaseEntity
     {
         LockId = null;
         LockedUntilUtc = null;
+    }
+
+    internal static OutboxMessagePG Create(IDomainEvent domainEvent)
+    {
+        throw new NotImplementedException();
     }
 
     public bool IsProcessed => ProcessedOnUtc.HasValue;

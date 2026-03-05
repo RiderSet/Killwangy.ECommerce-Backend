@@ -2,7 +2,7 @@
 using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Events;
 using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
 
-namespace GBastos.Casa_dos_Farelos.Domain.Entities;
+namespace GBastos.Casa_dos_Farelos.EstoqueService.Domain.Aggregates;
 
 public class Produto : AggregateRoot<Guid>
 {
@@ -111,5 +111,29 @@ public class Produto : AggregateRoot<Guid>
             throw new DomainException("Preço inválido.");
 
         PrecoVenda = preco;
+    }
+
+    protected override void ValidateInvariants()
+    {
+        if (Id == Guid.Empty)
+            throw new DomainException("Id do produto inválido.");
+
+        if (string.IsNullOrWhiteSpace(Nome))
+            throw new DomainException("Nome do produto obrigatório.");
+
+        if (string.IsNullOrWhiteSpace(DescricaoProduto))
+            throw new DomainException("Descrição do produto obrigatória.");
+
+        if (PrecoVenda <= 0)
+            throw new DomainException("Preço de venda inválido.");
+
+        if (QuantEstoque < 0)
+            throw new DomainException("Estoque não pode ser negativo.");
+
+        if (CategoriaId == Guid.Empty)
+            throw new DomainException("Categoria inválida.");
+
+        if (RowVersion is null || RowVersion.Length == 0)
+            throw new DomainException("RowVersion inválida.");
     }
 }

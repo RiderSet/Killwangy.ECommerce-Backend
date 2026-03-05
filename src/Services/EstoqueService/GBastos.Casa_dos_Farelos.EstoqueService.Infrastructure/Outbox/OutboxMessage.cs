@@ -1,4 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.Shared.Interfaces;
+using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
 using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 using System.Text.Json;
 
@@ -9,12 +10,15 @@ public sealed class OutboxMessage : BaseEntity
     public DateTime OccurredOnUtc { get; private set; }
     public string Type { get; private set; } = null!;
     public string Payload { get; private set; } = null!;
+    public int Version { get; private set; }
+
+    public string? IdempotencyKey { get; private set; }
+    public DateTime? NextRetryAtUtc { get; private set; }
     public DateTime? ProcessedOnUtc { get; private set; }
     public int Attempts { get; private set; }
-    public string? Error { get; private set; }
-    public int RetryCount { get; private set; }
 
-    // Controle de concorrência
+    public string? Error { get; private set; }
+
     public Guid? LockId { get; private set; }
     public DateTime? LockedUntilUtc { get; private set; }
 
@@ -22,52 +26,65 @@ public sealed class OutboxMessage : BaseEntity
 
     private OutboxMessage(
         Guid id,
-        string eventType,
+        string type,
         string payload,
-        DateTime occurredOnUtc)
+        DateTime occurredOnUtc,
+        string? idempotencyKey,
+        int version)
     {
         Id = id;
-        Type = eventType;
+        Type = type;
         Payload = payload;
         OccurredOnUtc = occurredOnUtc;
+        IdempotencyKey = idempotencyKey;
+        Version = version;
     }
 
-    public static OutboxMessage Create(IDomainEvent domainEvent)
-    {
-        return new OutboxMessage(
+    public static OutboxMessage CreateDomainEvent(IDomainEvent e)
+        => new(
             Guid.NewGuid(),
-            domainEvent.GetType().AssemblyQualifiedName!,
-            JsonSerializer.Serialize(domainEvent),
-            domainEvent.OccurredOnUtc
-        );
-    }
+            e.GetType().AssemblyQualifiedName!,
+            JsonSerializer.Serialize(e),
+            e.OccurredOnUtc,
+            e.EventId.ToString(),
+            1);
 
-    public static OutboxMessage CreateIntegrationEvent(object integrationEvent)
-    {
-        return new OutboxMessage(
+    public static OutboxMessage CreateIntegrationEvent(IIntegrationEvent e)
+        => new(
             Guid.NewGuid(),
-            integrationEvent.GetType().AssemblyQualifiedName!,
-            JsonSerializer.Serialize(integrationEvent),
-            DateTime.UtcNow
-        );
-    }
+            e.EventType,
+            JsonSerializer.Serialize(e),
+            e.OccurredOnUtc,
+            e.Id.ToString(),
+            e.Version);
 
     public void MarkAsProcessed()
     {
         ProcessedOnUtc = DateTime.UtcNow;
         Error = null;
+        Attempts++;
+        Unlock();
     }
 
     public void MarkFailed(string error)
     {
         Attempts++;
+
         Error = error;
+
+        var delay = TimeSpan.FromSeconds(Math.Pow(2, Attempts));
+
+        NextRetryAtUtc = DateTime.UtcNow.Add(delay);
+
+        Unlock();
     }
 
-    public void Lock(Guid lockId, TimeSpan duration)
+    public bool IsDeadLetter => Attempts >= 5;
+
+    public void Lock(DateTime lockUntilUtc)
     {
-        LockId = lockId;
-        LockedUntilUtc = DateTime.UtcNow.Add(duration);
+        LockId = Guid.NewGuid();
+        LockedUntilUtc = lockUntilUtc;
     }
 
     public void Unlock()
@@ -75,6 +92,4 @@ public sealed class OutboxMessage : BaseEntity
         LockId = null;
         LockedUntilUtc = null;
     }
-
-    public bool IsProcessed => ProcessedOnUtc.HasValue;
 }

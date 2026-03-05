@@ -1,5 +1,4 @@
-﻿
-using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Interfaces;
+﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
 using MassTransit;
 using System.Text.Json;
 
@@ -20,26 +19,51 @@ public sealed class OutboxDispatcher
 
     public async Task DispatchAsync(CancellationToken cancellationToken)
     {
-        var messages = await _repository.GetUnprocessedAsync(cancellationToken);
+        const int batchSize = 50;
+
+        var messages = await _repository.GetUnprocessedAsync(batchSize, cancellationToken);
 
         foreach (var message in messages)
         {
-            var type = Type.GetType(message.Type);
+            var lockUntil = DateTime.UtcNow.AddMinutes(1);
 
-            if (type is null)
+            var locked = await _repository.TryLockAsync(
+                message.Id,
+                lockUntil,
+                cancellationToken);
+
+            if (!locked)
                 continue;
 
-            var integrationEvent =
-                (IntegrationEvent?)JsonSerializer.Deserialize(
-                    message.Content,
-                    type);
+            try
+            {
+                var type = Type.GetType(message.Type);
+                if (type is null)
+                    continue;
 
-            if (integrationEvent is null)
-                continue;
+                var integrationEvent =
+                    JsonSerializer.Deserialize(
+                        message.Payload,
+                        type);
 
-            await _publishEndpoint.Publish(integrationEvent, cancellationToken);
+                if (integrationEvent is null)
+                    continue;
 
-            message.MarkAsProcessed();
+                await _publishEndpoint.Publish(
+                    integrationEvent,
+                    cancellationToken);
+
+                await _repository.MarkAsProcessedAsync(
+                    message.Id,
+                    cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                await _repository.MarkAsFailedAsync(
+                    message.Id,
+                    ex.Message,
+                    cancellationToken);
+            }
         }
 
         await _repository.SaveChangesAsync(cancellationToken);

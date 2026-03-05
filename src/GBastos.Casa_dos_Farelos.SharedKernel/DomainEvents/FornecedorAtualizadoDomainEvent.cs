@@ -10,7 +10,9 @@ public sealed class FornecedorAtualizadoDomainEvent : IDomainEvent
     public string Email { get; }
     public string CNPJ { get; }
 
-    public DateTime OccurredOn { get; }
+    public DateTime OccurredOnUtc { get; }
+
+    public Guid EventId => Guid.NewGuid();
 
     public FornecedorAtualizadoDomainEvent(
         Guid fornecedorId,
@@ -24,6 +26,6 @@ public sealed class FornecedorAtualizadoDomainEvent : IDomainEvent
         Telefone = telefone;
         Email = email;
         CNPJ = cnpj;
-        OccurredOn = DateTime.UtcNow;
+        OccurredOnUtc = DateTime.UtcNow;
     }
 }
