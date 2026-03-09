@@ -6,15 +6,19 @@ namespace GBastos.Casa_dos_Farelos.EstoqueService.Domain.Aggregates;
 
 public class Produto : AggregateRoot<Guid>
 {
+    private readonly List<Reserva> _reservas = new();
+
     public string Nome { get; private set; } = string.Empty;
     public string DescricaoProduto { get; private set; } = string.Empty;
     public decimal PrecoVenda { get; private set; }
     public int QuantEstoque { get; private set; }
-
+    public int QuantReservada => _reservas.Sum(x => x.Quantidade);
+    public int QuantDisponivel => QuantEstoque - QuantReservada;
     public Guid CategoriaId { get; private set; }
     public Categoria Categoria { get; private set; } = null!;
-
     public byte[] RowVersion { get; private set; } = null!;
+
+    public IReadOnlyCollection<Reserva> Reservas => _reservas;
 
     protected Produto() : base(Guid.Empty) { }
 
@@ -29,6 +33,9 @@ public class Produto : AggregateRoot<Guid>
         if (categoriaId == Guid.Empty)
             throw new DomainException("Categoria inválida.");
 
+        if (estoqueInicial < 0)
+            throw new DomainException("Estoque inicial inválido.");
+
         AlterarNome(nome);
         AlterarDescricao(descricao);
         AlterarPreco(precoVenda);
@@ -36,7 +43,8 @@ public class Produto : AggregateRoot<Guid>
         CategoriaId = categoriaId;
         QuantEstoque = estoqueInicial;
 
-        AddDomainEvent(new ProdutoCriadoEvent(Id, Nome, PrecoVenda));
+        AddDomainEvent(
+            new ProdutoCriadoEvent(Id, Nome, PrecoVenda));
     }
 
     public void EntradaEstoque(int quantidade)
@@ -48,6 +56,11 @@ public class Produto : AggregateRoot<Guid>
         {
             QuantEstoque += quantidade;
         }
+
+        AddDomainEvent(
+            new EstoqueAtualizadoDomainEvent(
+                Id,
+                QuantEstoque));
     }
 
     public void SaidaEstoque(int quantidade)
@@ -55,38 +68,98 @@ public class Produto : AggregateRoot<Guid>
         if (quantidade <= 0)
             throw new DomainException("Quantidade inválida.");
 
-        if (QuantEstoque < quantidade)
+        if (QuantDisponivel < quantidade)
             throw new DomainException(
                 $"Estoque insuficiente para o produto {Nome}");
 
         QuantEstoque -= quantidade;
 
-        AddDomainEvent(new EstoqueBaixadoDomainEvent(
-            Id,
-            Nome,
-            quantidade
-        ));
+        AddDomainEvent(
+            new EstoqueBaixadoDomainEvent(
+                Id,
+                Nome,
+                quantidade));
+    }
+
+    public Reserva ReservarEstoque(
+        Guid produtoId,
+        int quantidade,
+        DateTime expiraEm)
+    {
+        if (produtoId == Guid.Empty)
+            throw new DomainException("Pedido inválido.");
+
+        if (quantidade <= 0)
+            throw new DomainException("Quantidade inválida.");
+
+        if (QuantDisponivel < quantidade)
+            throw new DomainException(
+                $"Estoque insuficiente para reservar {Nome}");
+
+        var reserva = new Reserva(
+            produtoId,
+            quantidade,
+            TimeSpan.FromMinutes(15));
+
+        _reservas.Add(reserva);
+
+        AddDomainEvent(
+            new EstoqueReservadoDomainEvent(
+                Id,
+                produtoId,
+                quantidade));
+
+        return reserva;
+    }
+
+    public void ConfirmarReserva(Guid reservaId)
+    {
+        var reserva = _reservas
+            .FirstOrDefault(x => x.Id == reservaId);
+
+        if (reserva is null)
+            throw new DomainException("Reserva não encontrada.");
+
+        SaidaEstoque(reserva.Quantidade);
+
+        _reservas.Remove(reserva);
+
+        AddDomainEvent(
+            new ReservaConfirmadaDomainEvent(
+                Id,
+                reservaId));
+    }
+
+    public void CancelarReserva(Guid reservaId)
+    {
+        var reserva = _reservas
+            .FirstOrDefault(x => x.Id == reservaId);
+
+        if (reserva is null)
+            throw new DomainException("Reserva não encontrada.");
+
+        _reservas.Remove(reserva);
+
+        AddDomainEvent(
+            new ReservaCanceladaDomainEvent(
+                Id,
+                reservaId));
     }
 
     public void Atualizar(
         string nome,
         string descricao,
         decimal preco,
-        Guid categoriaId,
-        int quantEstoque)
+        Guid categoriaId)
     {
         if (categoriaId == Guid.Empty)
             throw new DomainException("Categoria inválida.");
-
-        if (quantEstoque < 0)
-            throw new DomainException("Estoque não pode ser negativo.");
 
         AlterarNome(nome);
         AlterarDescricao(descricao);
         AlterarPreco(preco);
 
         CategoriaId = categoriaId;
-        QuantEstoque = quantEstoque;
     }
 
     private void AlterarNome(string nome)
@@ -119,21 +192,15 @@ public class Produto : AggregateRoot<Guid>
             throw new DomainException("Id do produto inválido.");
 
         if (string.IsNullOrWhiteSpace(Nome))
-            throw new DomainException("Nome do produto obrigatório.");
-
-        if (string.IsNullOrWhiteSpace(DescricaoProduto))
-            throw new DomainException("Descrição do produto obrigatória.");
+            throw new DomainException("Nome obrigatório.");
 
         if (PrecoVenda <= 0)
-            throw new DomainException("Preço de venda inválido.");
+            throw new DomainException("Preço inválido.");
 
         if (QuantEstoque < 0)
-            throw new DomainException("Estoque não pode ser negativo.");
+            throw new DomainException("Estoque inválido.");
 
         if (CategoriaId == Guid.Empty)
             throw new DomainException("Categoria inválida.");
-
-        if (RowVersion is null || RowVersion.Length == 0)
-            throw new DomainException("RowVersion inválida.");
     }
 }

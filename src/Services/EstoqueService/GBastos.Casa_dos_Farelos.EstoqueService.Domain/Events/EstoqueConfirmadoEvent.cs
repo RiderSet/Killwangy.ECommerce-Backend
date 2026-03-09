@@ -7,8 +7,8 @@ public sealed record EstoqueConfirmadoEvent(
     int Quantidade
 ) : IDomainEvent
 {
-    public Guid Id { get; } = Guid.NewGuid();
-    public DateTime OccurredOnUtc { get; } = DateTime.UtcNow;
-
-    public Guid EventId => Guid.NewGuid();
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTime OccurredOnUtc { get; init; } = DateTime.UtcNow;
+    public Guid AggregateId => ProdutoId;
+    public string EventType => nameof(EstoqueConfirmadoEvent);
 }

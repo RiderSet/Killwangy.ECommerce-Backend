@@ -18,6 +18,7 @@ public sealed class Reserva
         if (quantidade <= 0)
             throw new ArgumentException("Quantidade deve ser maior que zero.");
 
+        Id = Guid.NewGuid();
         ProdutoId = produtoId;
         Quantidade = quantidade;
         ExpiraEm = DateTime.UtcNow.Add(tempoExpiracao);

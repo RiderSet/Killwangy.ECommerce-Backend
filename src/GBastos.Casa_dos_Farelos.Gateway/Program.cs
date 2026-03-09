@@ -1,45 +1,104 @@
-public static class EventEndpoints
+using GBastos.Casa_dos_Farelos.Gateway.Endpoints;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.OpenApi;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var services = builder.Services;
+
+services.AddEndpointsApiExplorer();
+
+#region API Versioning
+
+services.AddApiVersioning(options =>
 {
-    public static IEndpointRouteBuilder MapEventEndpoints(
-        this IEndpointRouteBuilder endpoints)
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+
+    options.ReportApiVersions = true;
+
+    options.ApiVersionReader =
+        new UrlSegmentApiVersionReader();
+});
+
+services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+#endregion
+
+#region Swagger
+
+services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
-        var group = endpoints.MapGroup("/events")
-            .WithTags("Events");
+        Title = "Casa dos Farelos Gateway",
+        Version = "v1",
+        Description = "API Gateway do sistema Casa dos Farelos"
+    });
 
-        group.MapPost("/publish", PublishAsync);
-        group.MapPost("/subscribe", Subscribe);
-
-        return endpoints;
-    }
-
-    private static async Task<IResult> PublishAsync(
-        PublishEventRequest request,
-        IEventBus eventBus,
-        CancellationToken ct)
+    options.SwaggerDoc("v2", new OpenApiInfo
     {
-        var integrationEvent = new GenericIntegrationEvent
+        Title = "Casa dos Farelos Gateway",
+        Version = "v2",
+        Description = "Versão 2 da API"
+    });
+
+    // JWT
+    var jwtSecurityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "JWT Authorization header usando Bearer",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+
+        Reference = new OpenApiReference
         {
-            Name = request.Name,
-            Payload = request.Payload
-        };
+            Id = "Bearer",
+            Type = ReferenceType.SecurityScheme
+        }
+    };
 
-        await eventBus.PublishAsync(integrationEvent, ct);
+    options.AddSecurityDefinition("Bearer", jwtSecurityScheme);
 
-        return Results.Ok(new
-        {
-            Message = "Evento publicado com sucesso",
-            integrationEvent.Id,
-            integrationEvent.EventType,
-            integrationEvent.OccurredOnUtc
-        });
-    }
-
-    private static IResult Subscribe(IEventBus eventBus)
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        eventBus.Subscribe<
-            GenericIntegrationEvent,
-            GenericIntegrationEventHandler>();
+        { jwtSecurityScheme, Array.Empty<string>() }
+    });
+});
 
-        return Results.Ok("Subscription registrada.");
-    }
+#endregion
+
+var app = builder.Build();
+
+#region Swagger UI
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Gateway v1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "Gateway v2");
+
+        options.RoutePrefix = "docs";
+
+        options.DisplayRequestDuration();
+        options.EnableTryItOutByDefault();
+    });
 }
+
+#endregion
+
+app.UseHttpsRedirection();
+
+app.MapEventEndpoints();
+
+app.Run()

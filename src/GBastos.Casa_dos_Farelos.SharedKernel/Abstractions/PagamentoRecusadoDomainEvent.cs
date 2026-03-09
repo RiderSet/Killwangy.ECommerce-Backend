@@ -11,6 +11,10 @@ public sealed class PagamentoRecusadoDomainEvent : IDomainEvent
 
     public Guid EventId => Guid.NewGuid();
 
+    public Guid AggregateId => Guid.NewGuid();
+
+    public string EventType => throw new NotImplementedException();
+
     public PagamentoRecusadoDomainEvent(
         Guid pagamentoId,
         Guid pedidoId,

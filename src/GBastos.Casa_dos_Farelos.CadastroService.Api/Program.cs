@@ -6,12 +6,11 @@ using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Serilog;
+using StackExchange.Redis;
 
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
-
-#region ===== Logging Enterprise =====
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -20,15 +19,14 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-#endregion
-
-#region ===== Configuration =====
-
 var configuration = builder.Configuration;
 
-#endregion
+var redisConnection =
+    builder.Configuration.GetValue<string>("Redis:ConnectionString")
+    ?? throw new InvalidOperationException("Redis connection string missing");
 
-#region ===== Database MySQL =====
+builder.Services.AddSingleton<IConnectionMultiplexer>(
+    ConnectionMultiplexer.Connect(redisConnection));
 
 builder.Services.AddDbContext<CadastroDbContext>(options =>
 {
@@ -50,18 +48,8 @@ builder.Services.AddDbContext<CadastroDbContext>(options =>
         });
 });
 
-#endregion
-
-#region ===== DI Services =====
-
 builder.Services.AddScoped<IEventBus, InMemoryEventBus>();
-
 builder.Services.AddControllers();
-
-#endregion
-
-#region ===== Swagger =====
-
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
@@ -74,16 +62,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-#endregion
-
-#region ===== HealthChecks =====
-
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<CadastroDbContext>("cadastro-db");
-
-#endregion
-
-#region ===== CORS =====
 
 builder.Services.AddCors(options =>
 {
@@ -95,11 +75,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-#endregion
-
 var app = builder.Build();
-
-#region ===== Middleware Pipeline =====
 
 if (app.Environment.IsDevelopment())
 {
@@ -108,19 +84,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapCadastroEndpoints();
-
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
-
 app.UseSerilogRequestLogging();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.MapHealthChecks("/health");
-
-#endregion
 
 app.Run();

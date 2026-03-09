@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedido-service
+  namespace: casa-dos-farelos
+  labels:
+    app: pedido-service
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: pedido-service
+
+  template:
+    metadata:
+      labels:
+        app: pedido-service
+
+    spec:
+      containers:
+        - name: pedido-service
+          image: casa-dos-farelos/pedido-service:latest
+
+          ports:
+            - containerPort: 80
+
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+
+            - name: ConnectionStrings__Default
+              value: "Server=sqlserver;Database=PedidosDb;User=sa;Password=Your_password123"
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

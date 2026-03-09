@@ -10,4 +10,8 @@ public sealed record UsuarioDesativadoDomainEvent(
     public DateTime OccurredOnUtc { get; } = DateTime.UtcNow;
 
     public Guid EventId => Guid.NewGuid();
+
+    public Guid AggregateId => throw new NotImplementedException();
+
+    public string EventType => throw new NotImplementedException();
 }

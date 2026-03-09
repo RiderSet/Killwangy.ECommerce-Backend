@@ -14,6 +14,10 @@ public sealed class FornecedorAtualizadoDomainEvent : IDomainEvent
 
     public Guid EventId => Guid.NewGuid();
 
+    public Guid AggregateId => Guid.NewGuid();
+
+    public string EventType => throw new NotImplementedException();
+
     public FornecedorAtualizadoDomainEvent(
         Guid fornecedorId,
         string nome,

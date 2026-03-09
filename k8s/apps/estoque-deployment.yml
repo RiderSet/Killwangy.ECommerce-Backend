@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: estoque-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: estoque
+  template:
+    metadata:
+      labels:
+        app: estoque
+    spec:
+      containers:
+      - name: estoque
+        image: casa-dos-farelos/estoque:latest
+        ports:
+        - containerPort: 80

@@ -9,8 +9,8 @@ public sealed record PagamentoAprovadoEvent(
     int Quantidade
 ) : IDomainEvent, INotification
 {
-    public Guid Id { get; } = Guid.NewGuid();
-    public DateTime OccurredOnUtc { get; } = DateTime.UtcNow;
-
-    public Guid EventId => Guid.NewGuid();
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTime OccurredOnUtc { get; init; } = DateTime.UtcNow;
+    public Guid AggregateId => PedidoId;
+    public string EventType => nameof(PagamentoAprovadoEvent);
 }

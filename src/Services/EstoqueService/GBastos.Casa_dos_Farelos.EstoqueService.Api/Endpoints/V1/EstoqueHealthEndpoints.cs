@@ -1,4 +1,4 @@
-﻿namespace GBastos.Casa_dos_Farelos.EstoqueService.Api.Endpoints;
+﻿namespace GBastos.Casa_dos_Farelos.EstoqueService.Api.Endpoints.V1;
 
 public static class EstoqueHealthEndpoints
 {

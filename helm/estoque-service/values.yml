@@ -1,0 +1,9 @@
+replicaCount: 2
+
+image:
+  repository: casa-dos-farelos/estoque
+  tag: latest
+
+service:
+  type: ClusterIP
+  port: 80

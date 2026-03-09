@@ -13,4 +13,8 @@ public sealed record ProdutoCriadoEvent(
     public DateTime OccurredOnUtc { get; } = DateTime.UtcNow;
 
     public Guid EventId => Guid.NewGuid();
-}
+
+    public Guid AggregateId => ProdutoId;
+
+    public string EventType => nameof(ProdutoCriadoEvent);
+    }

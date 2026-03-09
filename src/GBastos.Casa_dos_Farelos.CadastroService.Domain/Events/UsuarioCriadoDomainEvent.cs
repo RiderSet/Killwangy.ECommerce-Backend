@@ -8,6 +8,8 @@ public sealed record UsuarioCriadoDomainEvent(
     string Email
 ) : IDomainEvent
 {
-    public Guid EventId => Guid.NewGuid();
-    public DateTime OccurredOnUtc => DateTime.UtcNow;
+    public Guid EventId { get; init; } = Guid.NewGuid();
+    public DateTime OccurredOnUtc { get; init; } = DateTime.UtcNow;
+    public Guid AggregateId => UsuarioId;
+    public string EventType => nameof(UsuarioCriadoDomainEvent);
 }

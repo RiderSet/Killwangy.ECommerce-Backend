@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: casa-dos-farelos
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: casa-dos-farelos
+  source:
+    repoURL: https://github.com/empresa/casa-dos-farelos
+    path: helm
+    targetRevision: HEAD
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,374 @@
+🏗️ Como fica a arquitetura final
+                GitHub
+                   │
+                   │
+                ArgoCD
+                   │
+                   ▼
+            Kubernetes Cluster
+                   │
+       ┌───────────┼───────────┐
+       │           │           │
+       ▼           ▼           ▼
+   API Gateway   Services    Observability
+                 (.NET)     
+                   │
+     ┌─────────────┼─────────────┐
+     │             │             │
+Cadastro      Estoque       Compras
+Service       Service       Service
+     │             │             │
+     └─────────────┼─────────────┘
+                   │
+                RabbitMQ
+                   │
+                SQL Server
+
+Observability:
+Prometheus
+Grafana
+Jaeger
+Loki
+🚀 Em empresas grandes a arquitetura vira
+Developer
+   │
+   │ git push
+   ▼
+GitHub
+   │
+   ▼
+CI Pipeline
+(GitHub Actions / Azure DevOps)
+   │
+   │ build docker image
+   ▼
+Docker Registry
+   │
+   ▼
+ArgoCD
+   │
+   ▼
+Kubernetes
+   │
+   ▼
+Helm Charts
+⭐ O resultado
+
+Sua arquitetura terá:
+
+✅ Microservices .NET
+✅ SQL Server containerizado
+✅ RabbitMQ
+✅ Redis
+✅ Docker Compose (local)
+✅ Kubernetes (produção)
+✅ Helm
+✅ Argo CD
+✅ Prometheus
+✅ Grafana
+✅ Jaeger
+✅ Loki
+✅ OpenTelemetry
+
+Isso é praticamente o mesmo stack usado por empresas grandes.
+
+💡 Se quiser, posso também te mostrar a versão ULTRA PROFISSIONAL (nível Netflix / Uber) da sua arquitetura .NET com:
+
+Service Mesh (Istio)
+
+API Gateway real
+
+Distributed Tracing completo
+
+Secrets Manager
+
+Horizontal Pod Autoscaler
+
+Circuit Breaker
+
+Ela fica absurdamente mais profissional.
+
+Tenho que criar um pedido-deployment.yaml?
+
+Sim 👍
+Se você está migrando seus microservices para Kubernetes, cada serviço normalmente precisa de um Deployment. Portanto, sim — você deve criar um pedido-deployment.yaml para o microservice de pedidos.
+
+Isso define como o container do serviço será executado no cluster.
+
+📦 Onde colocar o pedido-deployment.yaml
+
+Na estrutura que mostrei antes, ele normalmente fica em:
+
+k8s/apps/
+
+Exemplo:
+
+k8s/
+ ├─ apps/
+ │   ├─ cadastro-deployment.yaml
+ │   ├─ estoque-deployment.yaml
+ │   ├─ pagamento-deployment.yaml
+ │   └─ pedido-deployment.yaml
+🧱 Exemplo de pedido-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pedido-service
+  namespace: casa-dos-farelos
+  labels:
+    app: pedido-service
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: pedido-service
+
+  template:
+    metadata:
+      labels:
+        app: pedido-service
+
+    spec:
+      containers:
+        - name: pedido-service
+          image: casa-dos-farelos/pedido-service:latest
+
+          ports:
+            - containerPort: 80
+
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+
+            - name: ConnectionStrings__Default
+              value: "Server=sqlserver;Database=PedidosDb;User=sa;Password=Your_password123"
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+🌐 Você também precisa do Service
+
+O Deployment cria os pods, mas o Service expõe o microservice dentro do cluster.
+
+Crie:
+
+pedido-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: pedido-service
+  namespace: casa-dos-farelos
+
+spec:
+  selector:
+    app: pedido-service
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+  type: ClusterIP
+📊 Fluxo no Kubernetes
+Internet
+   │
+   ▼
+Ingress
+   │
+   ▼
+API Gateway
+   │
+   ▼
+pedido-service (Service)
+   │
+   ▼
+Pods (Deployment)
+   │
+   ▼
+SQL Server / RabbitMQ
+📁 Estrutura recomendada
+k8s/
+│
+├─ namespace.yaml
+│
+├─ infrastructure/
+│   ├─ sqlserver.yaml
+│   ├─ rabbitmq.yaml
+│   └─ redis.yaml
+│
+├─ apps/
+│   ├─ pedido-deployment.yaml
+│   ├─ pedido-service.yaml
+│   ├─ estoque-deployment.yaml
+│   ├─ estoque-service.yaml
+│   ├─ cadastro-deployment.yaml
+│   └─ cadastro-service.yaml
+│
+└─ observability/
+    ├─ prometheus.yaml
+    ├─ grafana.yaml
+    ├─ jaeger.yaml
+    └─ loki.yaml
+🚀 Depois você aplica no cluster
+kubectl apply -f k8s/
+
+ou
+
+kubectl apply -f k8s/apps/pedido-deployment.yaml
+kubectl apply -f k8s/apps/pedido-service.yaml
+⭐ Dica profissional (empresas grandes)
+
+Na prática, quase ninguém mantém esses YAMLs manualmente.
+Eles usam Helm para gerar os deployments.
+
+Então você teria:
+
+helm/pedido-service/templates/deployment.yaml
+helm/pedido-service/templates/service.yaml
+
+E o deploy seria:
+
+helm install pedido-service ./helm/pedido-service
+
+💡 Se quiser, posso te mostrar o pedido-deployment.yaml nível produção real, com:
+
+livenessProbe
+
+readinessProbe
+
+OpenTelemetry
+
+Prometheus metrics
+
+autoscaling (HPA)
+
+Esse é o Deployment que empresas grandes realmente usam no Kubernetes.
+
+Onde ponho o  ?
+
+A sua pergunta ficou incompleta: “Onde ponho o ?” — parece que faltou o nome do arquivo ou componente (por exemplo pedido-deployment.yaml, helm, argocd, loki, etc.).
+
+Pode me dizer qual arquivo ou configuração exatamente você quer saber onde colocar?
+
+Exemplos do que você pode estar perguntando:
+
+pedido-deployment.yaml
+
+values.yaml
+
+Chart.yaml
+
+applications.yaml do Argo CD
+
+deployment.yaml do Helm
+
+configuração do Prometheus
+
+configuração do Grafana
+
+configuração do Loki
+
+Se você colar o trecho do arquivo ou o nome do arquivo, eu te mostro exatamente:
+
+📁 em que pasta do projeto colocar
+
+📦 como integrar com Kubernetes
+
+🚀 como aplicar no cluster.
+
+
+
+--==============================================================
+
+🚀 Solução mais fácil (recomendada)
+
+Use o cluster local do Docker Desktop.
+
+1️⃣ Abra o Docker Desktop
+2️⃣ Vá em
+Settings
+3️⃣ Clique em
+Kubernetes
+4️⃣ Ative
+Enable Kubernetes
+5️⃣ Clique
+Apply & Restart
+
+O Docker vai criar automaticamente um cluster Kubernetes local.
+
+Isso pode demorar 2–5 minutos.
+
+🔎 Depois verifique novamente
+
+Execute:
+
+kubectl config get-contexts
+
+Agora deve aparecer algo como:
+
+CURRENT   NAME             CLUSTER          AUTHINFO
+*         docker-desktop   docker-desktop   docker-desktop
+✅ Teste o cluster
+
+Execute:
+
+kubectl cluster-info
+
+Saída esperada:
+
+Kubernetes control plane is running at https://kubernetes.docker.internal
+CoreDNS is running
+📦 Agora você pode aplicar seus manifests
+
+Seu comando finalmente vai funcionar:
+
+kubectl apply -f k8s/apps
+
+Resultado esperado:
+
+deployment.apps/pedido-service created
+deployment.apps/estoque-service created
+service/pedido-service created
+🔎 Verifique os pods
+kubectl get pods
+
+Exemplo:
+
+NAME                              READY
+pedido-service-7c9d8b7d4f-2k8hx   1/1
+estoque-service-8f5f4c9c7f-j9xqp  1/1
+⭐ Alternativa profissional (muito usada)
+
+Outra opção é usar Minikube.
+
+Instalar:
+
+choco install minikube
+
+Criar cluster:
+
+minikube start
+
+Depois:
+
+kubectl get nodes
+
+💡 Se quiser, posso também te mostrar como criar um cluster Kubernetes completo para desenvolvimento que já vem com:
+
+Prometheus
+
+Grafana
+
+Jaeger
+
+Loki
+
+Argo CD
+
+Isso vira praticamente o mesmo ambiente que empresas usam em produção.
