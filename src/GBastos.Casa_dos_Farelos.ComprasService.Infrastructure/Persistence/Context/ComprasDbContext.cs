@@ -1,5 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.ComprasService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.ComprasService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
@@ -44,7 +45,7 @@ public class ComprasDbContext : DbContext
 
             foreach (var domainEvent in domainEvents)
             {
-                var outboxMessage = new OutboxMessage(domainEvent);
+                var outboxMessage = OutboxMessage.Create(domainEvent);
                 OutboxMessages.Add(outboxMessage);
             }
         }

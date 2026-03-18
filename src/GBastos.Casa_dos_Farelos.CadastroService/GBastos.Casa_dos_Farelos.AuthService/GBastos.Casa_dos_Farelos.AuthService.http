@@ -1,0 +1,6 @@
+@GBastos.Casa_dos_Farelos.AuthService_HostAddress = http://localhost:5136
+
+GET {{GBastos.Casa_dos_Farelos.AuthService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

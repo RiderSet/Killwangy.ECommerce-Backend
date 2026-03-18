@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.AuthService.Application\GBastos.Casa_dos_Farelos.AuthService.Application.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.AuthService.Domain\GBastos.Casa_dos_Farelos.AuthService.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

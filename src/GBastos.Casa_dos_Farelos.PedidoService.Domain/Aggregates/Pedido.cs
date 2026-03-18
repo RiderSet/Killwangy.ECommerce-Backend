@@ -1,8 +1,10 @@
-﻿using GBastos.Casa_dos_Farelos.PedidoService.Domain.Domain.Events;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Common;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.PedidoService.Domain.Domain.ValueObjects;
 using GBastos.Casa_dos_Farelos.PedidoService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.PedidoService.Domain.Enums;
-using GBastos.Casa_dos_Farelos.SharedKernel.Common;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.PedidoService.Domain.Events;
 
 namespace GBastos.Casa_dos_Farelos.PedidoService.Domain.Aggregates;
 
@@ -12,14 +14,20 @@ public class Pedido : AggregateRoot<Guid>
 
     public Guid ClienteId { get; private set; }
     public StatusPedido Status { get; private set; }
-    public Money? Total { get; private set; }
+    public Money Total { get; private set; }
+    public PedidoNumero Numero { get; private set; }
 
-    public IReadOnlyCollection<ItemPedido> Itens => _itens;
+    public IReadOnlyCollection<ItemPedido> Itens => _itens.AsReadOnly();
 
-    protected Pedido() : base(Guid.Empty) { } 
+    protected Pedido() : base(Guid.Empty)
+    {
+        Total = Money.Zero("BRL");
+        Status = StatusPedido.Criado;
+        Numero = new PedidoNumero(1);
+        ClienteId = Guid.Empty;
+    }
 
-    private Pedido(Guid clienteId)
-        : base(Guid.NewGuid())
+    private Pedido(Guid clienteId, PedidoNumero numero) : base(Guid.NewGuid())
     {
         if (clienteId == Guid.Empty)
             throw new DomainException("Cliente inválido.");
@@ -27,17 +35,19 @@ public class Pedido : AggregateRoot<Guid>
         ClienteId = clienteId;
         Status = StatusPedido.Criado;
         Total = Money.Zero("BRL");
+        Numero = numero ?? throw new DomainException("Número do pedido inválido.");
     }
 
-    public static Pedido Criar(Guid clienteId)
+    public static Pedido Criar(Guid clienteId, int numeroPedido)
     {
-        var pedido = new Pedido(clienteId);
+        var pedido = new Pedido(clienteId, new PedidoNumero(numeroPedido));
 
-        pedido.AddDomainEvent(
-            new PedidoCriadoEvent(
-                pedido.Id,
-                pedido.ClienteId
-            ));
+        pedido.AddDomainEvent(new PedidoCriadoEvent(
+            pedido.Id,
+            pedido.ClienteId,
+            pedido.Total,
+            pedido.Numero
+        ));
 
         return pedido;
     }
@@ -46,33 +56,32 @@ public class Pedido : AggregateRoot<Guid>
         Guid produtoId,
         string nomeProduto,
         int quantidade,
-        decimal precoUnitario)
+        Money precoUnitario)
     {
         if (Status != StatusPedido.Criado)
             throw new DomainException("Não é possível alterar o pedido.");
 
-        if (produtoId == Guid.Empty)
-            throw new DomainException("Produto inválido.");
+        var existente = _itens.FirstOrDefault(x => x.ProdutoId == produtoId);
 
-        if (string.IsNullOrWhiteSpace(nomeProduto))
-            throw new DomainException("Nome do produto obrigatório.");
+        if (existente != null)
+        {
+            existente.AdicionarQuantidade(quantidade);
+        }
+        else
+        {
+            var item = new ItemPedido(
+                Id,
+                produtoId,
+                nomeProduto,
+                quantidade,
+                precoUnitario,
+                Numero);
 
-        if (quantidade <= 0)
-            throw new DomainException("Quantidade inválida.");
-
-        if (precoUnitario <= 0)
-            throw new DomainException("Preço inválido.");
-
-        var item = new ItemPedido(
-            Id,
-            produtoId,
-            nomeProduto,
-            quantidade,
-            precoUnitario);
-
-        _itens.Add(item);
+            _itens.Add(item);
+        }
 
         RecalcularTotal();
+        ValidateInvariants();
     }
 
     public void Confirmar()
@@ -83,19 +92,20 @@ public class Pedido : AggregateRoot<Guid>
         if (Status != StatusPedido.Criado)
             throw new DomainException("Pedido já processado.");
 
-        if (Total is not Money total || total.Amount <= 0)
+        if (Total.Amount <= 0)
             throw new DomainException("Pedido com valor inválido.");
 
         Status = StatusPedido.Confirmado;
 
-        AddDomainEvent(
-            new PedidoConfirmadoEvent(
-                Id,
-                ClienteId,
-                Total
-            ));
+        AddDomainEvent(new PedidoConfirmadoEvent(
+            Id,
+            ClienteId,
+            Total,
+            Numero
+        ));
     }
 
+    // Cancela pedido
     public void Cancelar()
     {
         if (Status == StatusPedido.Pago)
@@ -103,17 +113,19 @@ public class Pedido : AggregateRoot<Guid>
 
         Status = StatusPedido.Cancelado;
 
-        AddDomainEvent(
-            new PedidoCanceladoEvent(
-                Id,
-                ClienteId
-            ));
+        AddDomainEvent(new PedidoCanceladoEvent(
+            Id,
+            ClienteId,
+            Numero
+        ));
     }
 
     private void RecalcularTotal()
     {
-        var totalAmount = _itens.Sum(i => i.SubTotal);
-        Total = new Money(totalAmount, "BRL");
+        var totalAmount = _itens.Sum(i => i.SubTotal.Amount);
+        var currency = _itens.FirstOrDefault()?.PrecoUnitario.Currency ?? "BRL";
+
+        Total = new Money(totalAmount, currency);
     }
 
     protected override void ValidateInvariants()
@@ -129,8 +141,7 @@ public class Pedido : AggregateRoot<Guid>
 
         if (_itens.Any())
         {
-            var somaItens = _itens.Sum(i => i.SubTotal);
-
+            var somaItens = _itens.Sum(i => i.SubTotal.Amount);
             if (Total is null)
                 throw new DomainException("Total não pode ser nulo quando há itens.");
 
@@ -138,11 +149,18 @@ public class Pedido : AggregateRoot<Guid>
                 throw new DomainException("Total do pedido inconsistente.");
         }
 
-        if ((Status == StatusPedido.Confirmado || Status == StatusPedido.Pago)
-            && !_itens.Any())
+        if ((Status == StatusPedido.Confirmado || Status == StatusPedido.Pago) && !_itens.Any())
             throw new DomainException("Pedido confirmado deve possuir itens.");
 
-        if (Total is not null && Total.Amount < 0)
+        if (Total != null && Total.Amount < 0)
             throw new DomainException("Total do pedido não pode ser negativo.");
+
+        if (Numero == null)
+            throw new DomainException("Número do pedido não pode ser nulo.");
+    }
+
+    public static Pedido Criar(Guid clienteId)
+    {
+        throw new NotImplementedException();
     }
 }

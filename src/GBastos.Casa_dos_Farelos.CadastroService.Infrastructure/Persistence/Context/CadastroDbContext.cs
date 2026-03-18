@@ -1,6 +1,6 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
-using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Outbox;
+using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Persistence.Context;
@@ -26,5 +26,8 @@ public class CadastroDbContext : DbContext
         builder.Entity<Veiculo>().HasKey(x => x.Id);
         builder.Entity<Fornecedor>().HasKey(x => x.Id);
         builder.Entity<Cliente>().HasKey(x => x.Id);
+
+
+        builder.ApplyConfiguration(new VeiculoMap());
     }
 }

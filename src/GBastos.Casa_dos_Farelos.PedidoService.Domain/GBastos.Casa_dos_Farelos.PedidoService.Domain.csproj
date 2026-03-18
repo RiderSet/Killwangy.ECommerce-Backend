@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.ComprasService.Domain\GBastos.Casa_dos_Farelos.ComprasService.Domain.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.SharedKernel\GBastos.Casa_dos_Farelos.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

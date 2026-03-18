@@ -1,3 +1,3 @@
 ﻿namespace GBastos.Casa_dos_Farelos.ComprasService.Api.Contract;
 
-public sealed record CriarCompraRequest(Guid Id);
+public sealed record CriarCompraRequest(Guid ClienteId);

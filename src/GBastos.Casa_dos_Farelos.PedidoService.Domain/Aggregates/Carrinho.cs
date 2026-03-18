@@ -1,5 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.PedidoService.Domain.Entities;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.PedidoService.Domain.Entities;
 
 namespace GBastos.Casa_dos_Farelos.PedidoService.Domain.Aggregates;
 

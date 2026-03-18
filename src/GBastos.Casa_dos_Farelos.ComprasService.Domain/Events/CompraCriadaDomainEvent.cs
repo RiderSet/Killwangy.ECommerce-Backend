@@ -1,5 +1,6 @@
-﻿namespace GBastos.Casa_dos_Farelos.ComprasService.Domain.Events;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Events;
 
-internal class CompraCriadaDomainEvent
-{
-}
+public sealed record CompraCriadaDomainEvent(
+    Guid CompraId,
+    Guid ClienteId
+) : DomainEvent(CompraId);

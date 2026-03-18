@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces;
+﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.Messaging.Abstractions;

@@ -1,28 +1,33 @@
-using GBastos.Casa_dos_Farelos.ComprasService.Api.Endpoints;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Events;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents.Persistence;
+using GBastos.Casa_dos_Farelos.ComprasService.Application.Comands.CriarCompra;
 using GBastos.Casa_dos_Farelos.ComprasService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Interfaces;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
 using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
 using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Repository;
 using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.UOW;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var services = builder.Services;
-var configuration = builder.Configuration;
+builder.Services.AddDbContext<ComprasDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ComprasConnection")));
 
-services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<ICompraRepository, CompraRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-services.AddSwaggerGen();
+builder.Services.AddMediatR(typeof(CriarCompraHandler).Assembly);
 
-services.AddDbContext<ComprasDbContext>(options =>
-{
-    options.UseSqlServer(
-        configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.AddScoped<IOutboxRepository, OutboxRepository>();
+builder.Services.AddScoped<IEventBus, InMemoryEventBus>();
+builder.Services.AddHostedService<OutboxProcessor>();
 
-services.AddScoped<ICompraRepository, CompraRepository>();
-services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -33,7 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.MapCompraEndpoints();
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();

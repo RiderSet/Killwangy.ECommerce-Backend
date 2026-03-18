@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.ValueObjects;
 
 namespace GBastos.Casa_dos_Farelos.PagamentoService.Domain.ValueObjects;
 

@@ -1,5 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
-using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.ValueObjects;
 

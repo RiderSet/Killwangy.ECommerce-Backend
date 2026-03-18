@@ -1,9 +1,9 @@
-﻿using GBastos.Casa_dos_Farelos.ComprasService.Api.Contract;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Common;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents.Persistence;
+using GBastos.Casa_dos_Farelos.ComprasService.Api.Contract;
 using GBastos.Casa_dos_Farelos.ComprasService.Api.Contracts;
 using GBastos.Casa_dos_Farelos.ComprasService.Application.Interfaces;
 using GBastos.Casa_dos_Farelos.ComprasService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.SharedKernel.Common;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 
 namespace GBastos.Casa_dos_Farelos.ComprasService.Api.Endpoints;
 
@@ -23,7 +23,7 @@ public static class CompraEndpoints
             IUnitOfWork uow,
             CancellationToken ct) =>
         {
-            var compra = new Compra(request.Id);
+            var compra = Compra.CriarCompra(request.ClienteId);
 
             await repository.AddAsync(compra, ct);
             await uow.SaveChangesAsync(ct);

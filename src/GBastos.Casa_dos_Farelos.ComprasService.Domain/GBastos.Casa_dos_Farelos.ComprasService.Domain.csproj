@@ -11,11 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.SharedKernel\GBastos.Casa_dos_Farelos.SharedKernel.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

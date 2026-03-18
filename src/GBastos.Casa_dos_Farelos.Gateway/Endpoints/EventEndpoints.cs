@@ -1,5 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Events;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Events;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
 
 namespace GBastos.Casa_dos_Farelos.Gateway.Endpoints;
 
@@ -26,15 +26,16 @@ public static class EventEndpoints
         var integrationEvent = new GenericIntegrationEvent
         {
             EventType = request.EventType,
-            Payload = request.Payload,
-            OccurredOn = request.OccurredOnUtc
+            Payload = request.Payload
+            //,
+            //OccurredOn = request.OccurredOnUtc
         };
 
         await eventBus.PublishAsync(integrationEvent, ct);
 
         return Results.Ok(new
         {
-            Message = "Evento publicado com sucesso",
+            message = "Evento publicado com sucesso",
             integrationEvent.Id,
             integrationEvent.EventType,
             integrationEvent.OccurredOnUtc
@@ -49,7 +50,7 @@ public static class EventEndpoints
 
         return Results.Ok(new
         {
-            Message = "Subscription registrada com sucesso"
+            message = "Subscription registrada com sucesso"
         });
     }
 }

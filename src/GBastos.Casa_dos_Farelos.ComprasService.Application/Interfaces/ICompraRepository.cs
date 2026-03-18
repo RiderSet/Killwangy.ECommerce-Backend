@@ -24,5 +24,7 @@ public interface ICompraRepository
     Task<bool> ExistsAsync(
         Guid id,
         CancellationToken ct);
-    Task<object?> ListAsync(CancellationToken ct);
+
+    Task<List<Compra>> ListAsync(
+        CancellationToken ct);
 }

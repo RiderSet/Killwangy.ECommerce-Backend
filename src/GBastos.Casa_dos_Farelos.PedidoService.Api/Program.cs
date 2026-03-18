@@ -1,6 +1,6 @@
-using GBastos.Casa_dos_Farelos.Messaging.RabbitMqPublisher;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
+using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Messaging.EventBus;
 using GBastos.Casa_dos_Farelos.PedidoService.Api.Endpoints;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,5 @@
-﻿namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints
+﻿namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
+
+public class HealthEndpoints
 {
-    public class HealthEndpoints
-    {
-    }
 }

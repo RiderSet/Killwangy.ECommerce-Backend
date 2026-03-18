@@ -1,4 +1,6 @@
-﻿namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
+
+namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 
 public interface IVeiculoRepository
 {

@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />
+    <PackageReference Include="OpenTelemetry" Version="1.15.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
+    <PackageReference Include="Serilog" Version="4.3.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+
+	  <!-- Swagger -->
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authorization\AuthorizationEndpoint\" />
+    <Folder Include="Authorization\ConsentEndpoint\" />
+    <Folder Include="Authorization\TokenEndpoint\" />
+    <Folder Include="OAuth\AuthorizationCodeFlow\" />
+    <Folder Include="OAuth\ClientCredentialsFlow\" />
+    <Folder Include="OAuth\RefreshTokenFlow\" />
+    <Folder Include="OpenId\DiscoveryEndpoint\" />
+    <Folder Include="OpenId\JWKS\" />
+    <Folder Include="OpenId\UserInfoEndpoint\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\GBastos.Casa_dos_Farelos.AuthService.Application\GBastos.Casa_dos_Farelos.AuthService.Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,5 +1,7 @@
-﻿namespace GBastos.Casa_dos_Farelos.ComprasService.Application.Comands.CriarCompra;
+﻿using MediatR;
 
-internal class CriarCompraCommand
-{
-}
+namespace GBastos.Casa_dos_Farelos.ComprasService.Application.Comands.CriarCompra;
+
+public sealed record CriarCompraCommand(
+    Guid ClienteId
+) : IRequest<Guid>;

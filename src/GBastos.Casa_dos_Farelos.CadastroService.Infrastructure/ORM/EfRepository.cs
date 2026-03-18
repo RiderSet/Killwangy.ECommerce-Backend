@@ -1,5 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
-using GBastos.Casa_dos_Farelos.SharedKernel.Persistence;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.ORM;

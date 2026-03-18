@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.PedidoService.Domain\GBastos.Casa_dos_Farelos.PedidoService.Domain.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.SharedKernel\GBastos.Casa_dos_Farelos.SharedKernel.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,10 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
-using GBastos.Casa_dos_Farelos.SharedKernel.DomainEvents;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.DomainEvents;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
 
-namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
+namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 
 public class Veiculo : AggregateRoot<Guid>
 {
@@ -13,12 +15,7 @@ public class Veiculo : AggregateRoot<Guid>
 
     private Veiculo() : base(Guid.Empty) { }
 
-    private Veiculo(
-        Guid id,
-        PlacaVeiculo placa,
-        string? modelo,
-        TipoVeiculo tipo,
-        Guid? proprietarioId)
+    private Veiculo(Guid id, PlacaVeiculo placa, string? modelo, TipoVeiculo tipo, Guid? proprietarioId)
         : base(id)
     {
         Placa = placa;
@@ -28,15 +25,10 @@ public class Veiculo : AggregateRoot<Guid>
 
         ValidateInvariants();
 
-        AddDomainEvent(
-            new VeiculoCriadoEvent(Id, placa.Valor));
+        AddDomainEvent(new VeiculoCriadoEvent(Id, placa.Valor));
     }
 
-    public static Veiculo Criar(
-        string placa,
-        string? modelo,
-        TipoVeiculo tipo,
-        Guid? proprietarioId = null)
+    public static Veiculo Criar(string placa, string? modelo, TipoVeiculo tipo, Guid? proprietarioId = null)
     {
         if (string.IsNullOrWhiteSpace(placa))
             throw new DomainException("Placa é obrigatória.");
@@ -44,12 +36,7 @@ public class Veiculo : AggregateRoot<Guid>
         if (tipo == default)
             throw new DomainException("Tipo é obrigatório.");
 
-        return new Veiculo(
-            Guid.NewGuid(),
-            new PlacaVeiculo(placa),
-            modelo,
-            tipo,
-            proprietarioId);
+        return new Veiculo(Guid.NewGuid(), new PlacaVeiculo(placa), modelo, tipo, proprietarioId);
     }
 
     protected override void ValidateInvariants()

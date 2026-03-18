@@ -1,0 +1,36 @@
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
+
+namespace GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+
+public abstract class Entity<TId> : IEntity, IEquatable<Entity<TId>>
+    where TId : notnull
+{
+    public TId Id { get; protected set; }
+
+    protected Entity(TId id)
+    {
+        Id = id ?? throw new ArgumentNullException(nameof(id));
+    }
+
+    public object GetId() => Id!;
+
+    public override bool Equals(object? obj)
+        => obj is Entity<TId> other && Equals(other);
+
+    public bool Equals(Entity<TId>? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+
+        return EqualityComparer<TId>.Default.Equals(Id, other.Id);
+    }
+
+    public override int GetHashCode()
+        => EqualityComparer<TId>.Default.GetHashCode(Id);
+
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
+        => Equals(left, right);
+
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
+        => !Equals(left, right);
+}

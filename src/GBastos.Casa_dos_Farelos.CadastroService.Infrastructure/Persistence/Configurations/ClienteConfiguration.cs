@@ -1,6 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
-using GBastos.Casa_dos_Farelos.SharedKernel.Utils;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Utils;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,8 +26,8 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
             .HasMaxLength(20);
 
         builder.HasDiscriminator<string>("TipoCliente")
-            .HasValue<ClientePF>("PF")
-            .HasValue<ClientePJ>("PJ");
+            .HasValue<ClientePessoaFisica>("PF")
+            .HasValue<ClientePessoaJuridica>("PJ");
 
         builder.OwnsOne(typeof(Cpf), "Cpf", cpf =>
         {

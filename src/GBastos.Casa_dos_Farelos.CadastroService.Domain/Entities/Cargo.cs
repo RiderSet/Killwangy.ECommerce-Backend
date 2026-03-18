@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 

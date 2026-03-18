@@ -14,13 +14,43 @@ public class ClienteRepository : IClienteRepository
         _context = context;
     }
 
-    public async Task<Cliente?> ObterPorIdAsync(Guid id)
-        => await _context.Clientes.FindAsync(id);
+    private Task<Cliente?> FindByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return _context.Clientes.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+    }
 
-    public async Task AdicionarAsync(Cliente cliente)
-        => await _context.Clientes.AddAsync(cliente);
+    public Task<Cliente?> ObterPorIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return FindByIdAsync(id, cancellationToken);
+    }
 
-    public async Task<bool> EmailJaExisteAsync(string email)
-        => await _context.Clientes
-            .AnyAsync(x => x.Email == email);
+    public Task<Cliente?> GetByIdAsync(Guid clienteId, CancellationToken cancellationToken)
+    {
+        return FindByIdAsync(clienteId, cancellationToken);
+    }
+
+    public async Task AdicionarAsync(Cliente cliente, CancellationToken cancellationToken)
+    {
+        await _context.Clientes.AddAsync(cliente, cancellationToken);
+    }
+
+    public async Task<bool> EmailJaExisteAsync(string email, CancellationToken cancellationToken)
+    {
+        return await _context.Clientes.AnyAsync(x => x.Email == email, cancellationToken);
+    }
+
+    public async Task<bool> ExistePorDocumentoAsync(string documento, CancellationToken cancellationToken)
+    {
+        return await _context.Clientes.AnyAsync(x => x.Documento == documento, cancellationToken);
+    }
+
+    public void Remover(Cliente cliente)
+    {
+        _context.Clientes.Remove(cliente);
+    }
+
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

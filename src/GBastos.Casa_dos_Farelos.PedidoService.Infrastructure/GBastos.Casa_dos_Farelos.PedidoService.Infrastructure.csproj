@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.ComprasService.Infrastructure\GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.Messaging\GBastos.Casa_dos_Farelos.Messaging.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.PedidoService.Domain\GBastos.Casa_dos_Farelos.PedidoService.Domain.csproj" />
   </ItemGroup>
 

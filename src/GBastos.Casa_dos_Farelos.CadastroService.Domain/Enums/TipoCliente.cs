@@ -3,5 +3,6 @@
 public enum TipoCliente
 {
     PessoaFisica,
-    PessoaJuridica
+    PessoaJuridica,
+    Interno
 }

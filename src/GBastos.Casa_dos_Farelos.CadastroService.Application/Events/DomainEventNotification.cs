@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Events;

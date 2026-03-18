@@ -1,54 +1,70 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
+using GBastos.Casa_dos_Farelos.ComprasService.Domain.Common;
+using MediatR;
 using System.Text.Json;
 
-namespace GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
+namespace GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Interfaces;
 
-public class OutboxMessage : BaseEntity
+public sealed class OutboxMessage : BaseEntity
 {
-    private string? error;
-
+    public DateTime OccurredOnUtc { get; private set; }
     public string Type { get; private set; } = null!;
     public string Payload { get; private set; } = null!;
-    public DateTime OccurredOnUtc { get; private set; }
     public DateTime? ProcessedOnUtc { get; private set; }
-    public DateTime? LockedUntilUtc { get; private set; }
-    public Guid? LockId { get; private set; }
+    public int Attempts { get; private set; }
     public string? Error { get; private set; }
     public int RetryCount { get; private set; }
+    public Guid? LockId { get; private set; }
+    public DateTime? LockedUntilUtc { get; private set; }
 
     private OutboxMessage() { }
 
-    public OutboxMessage(object @event)
+    private OutboxMessage(
+        Guid id,
+        string type,
+        string payload,
+        DateTime occurredOnUtc)
     {
-        Id = Guid.NewGuid();
+        Id = id;
+        Type = type;
+        Payload = payload;
+        OccurredOnUtc = occurredOnUtc;
+    }
 
-        Type = @event.GetType().Name;
+    public static OutboxMessage Create(IDomainEvent domainEvent)
+    {
+        return new OutboxMessage(
+            Guid.NewGuid(),
+            domainEvent.GetType().Name,
+            JsonSerializer.Serialize(domainEvent),
+            domainEvent.OccurredOnUtc
+        );
+    }
 
-        Payload = JsonSerializer.Serialize(
-            @event,
-            new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = false
-            });
-
-        OccurredOnUtc = DateTime.UtcNow;
+    public static OutboxMessage CreateIntegrationEvent(object integrationEvent)
+    {
+        return new OutboxMessage(
+            Guid.NewGuid(),
+            integrationEvent.GetType().Name,
+            JsonSerializer.Serialize(integrationEvent),
+            DateTime.UtcNow
+        );
     }
 
     public void MarkAsProcessed()
     {
         ProcessedOnUtc = DateTime.UtcNow;
         Error = null;
-        Unlock();
     }
 
-    public void MarkAsFailed(string error)
+    public void MarkAsFailed(string message)
     {
+        Attempts++;
         RetryCount++;
-        Error = error;
-
-        Unlock();
+        Error = message;
     }
+
+    public bool IsProcessed => ProcessedOnUtc.HasValue;
 
     public void Lock(Guid lockId, TimeSpan duration)
     {
@@ -62,16 +78,16 @@ public class OutboxMessage : BaseEntity
         LockedUntilUtc = null;
     }
 
-    internal void MarkFailed(string message)
+    public void MarkFailed(string message)
     {
+        Attempts++;
         RetryCount++;
-        Error = error;
+        Error = message;
         Unlock();
     }
 
-    public bool IsProcessingLocked =>
-        LockedUntilUtc.HasValue &&
-        LockedUntilUtc > DateTime.UtcNow;
-
-    public bool IsProcessed => ProcessedOnUtc.HasValue;
+    internal static OutboxMessage Create(INotification domainEvent)
+    {
+        throw new NotImplementedException();
+    }
 }

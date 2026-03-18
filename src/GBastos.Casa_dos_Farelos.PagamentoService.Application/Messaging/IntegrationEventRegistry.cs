@@ -1,5 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.Shared.Interfaces;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.IntegrationEvents;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
 using System.Collections.Concurrent;
 
 namespace GBastos.Casa_dos_Farelos.PagamentoService.Application.Messaging;

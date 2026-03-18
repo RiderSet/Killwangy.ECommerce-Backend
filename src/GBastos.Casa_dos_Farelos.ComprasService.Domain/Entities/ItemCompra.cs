@@ -1,6 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
-using GBastos.Casa_dos_Farelos.SharedKernel.Common;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Common;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
 
 public class ItemCompra : Entity<Guid>
 {

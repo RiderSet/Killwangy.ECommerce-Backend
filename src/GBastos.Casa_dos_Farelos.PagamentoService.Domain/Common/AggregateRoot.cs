@@ -1,6 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
-
-namespace GBastos.Casa_dos_Farelos.PagamentoService.Domain.Common;
+﻿namespace GBastos.Casa_dos_Farelos.PagamentoService.Domain.Common;
 
 public abstract class AggregateRoot : BaseEntity
 {

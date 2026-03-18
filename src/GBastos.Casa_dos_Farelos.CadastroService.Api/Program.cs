@@ -1,18 +1,26 @@
+using CorrelationId;
+using CorrelationId.DependencyInjection;
 using DotNetEnv;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.DomainEvents;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
 using GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
 using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Persistence.Context;
-using GBastos.Casa_dos_Farelos.SharedKernel.DomainEvents;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 using StackExchange.Redis;
+
 
 Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
@@ -21,8 +29,14 @@ builder.Host.UseSerilog();
 
 var configuration = builder.Configuration;
 
+builder.Services.AddDefaultCorrelationId(options =>
+{
+    options.RequestHeader = "X-Correlation-ID";
+    options.IncludeInResponse = true;
+});
+
 var redisConnection =
-    builder.Configuration.GetValue<string>("Redis:ConnectionString")
+    configuration["Redis:ConnectionString"]
     ?? throw new InvalidOperationException("Redis connection string missing");
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(
@@ -48,10 +62,56 @@ builder.Services.AddDbContext<CadastroDbContext>(options =>
         });
 });
 
+// Tracing
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource =>
+    {
+        resource.AddService(
+            serviceName: "CadastroService",
+            serviceVersion: "1.0.0");
+    })
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddConsoleExporter();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation();
+    });
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<CadastroDbContext>("cadastro-db")
+    .AddRedis(redisConnection, name: "redis");
+
 builder.Services.AddScoped<IEventBus, InMemoryEventBus>();
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("api", config =>
+    {
+        config.Window = TimeSpan.FromSeconds(10);
+        config.PermitLimit = 100;
+        config.QueueLimit = 2;
+    });
+});
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = ctx =>
+    {
+        ctx.ProblemDetails.Extensions["traceId"] =
+            ctx.HttpContext.TraceIdentifier;
+    };
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -63,7 +123,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddHealthChecks()
-    .AddDbContextCheck<CadastroDbContext>("cadastro-db");
+    .AddDbContextCheck<CadastroDbContext>("cadastro-db")
+    .AddRedis(redisConnection, "redis");
 
 builder.Services.AddCors(options =>
 {
@@ -83,11 +144,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapCadastroEndpoints();
+app.UseCorrelationId();
+
+app.UseSerilogRequestLogging();
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.UseSerilogRequestLogging();
+app.UseRateLimiter();
 app.UseAuthorization();
+app.MapCadastroEndpoints();
 app.MapControllers();
 app.MapHealthChecks("/health");
 

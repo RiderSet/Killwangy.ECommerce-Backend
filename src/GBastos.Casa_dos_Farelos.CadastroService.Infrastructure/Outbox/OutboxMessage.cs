@@ -1,5 +1,7 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Abstractions;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.IntegrationEvents.Pagamentos;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.IntegrationEvents;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
 using System.Text.Json;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Outbox;
@@ -16,7 +18,10 @@ public sealed class OutboxMessage : BaseEntity
     public Guid? LockId { get; private set; }
     public DateTime? LockedUntilUtc { get; private set; }
 
-    private OutboxMessage() { }
+    private OutboxMessage(Guid id)
+    {
+        Id = id;
+    }
 
     private OutboxMessage(
         Guid id,
@@ -28,10 +33,27 @@ public sealed class OutboxMessage : BaseEntity
         Type = type;
         Payload = payload;
         OccurredOnUtc = occurredOnUtc;
+        Attempts = 0;
+        RetryCount = 0;
     }
 
+    public OutboxMessage(
+        Guid id,
+        DateTime occurredOnUtc,
+        string type,
+        string payload)
+    {
+        Id = id;
+        OccurredOnUtc = occurredOnUtc;
+        Type = type;
+        Payload = payload;
+    }
+
+    // Cria mensagem a partir de DomainEvent
     public static OutboxMessage Create(IDomainEvent domainEvent)
     {
+        if (domainEvent == null) throw new ArgumentNullException(nameof(domainEvent));
+
         return new OutboxMessage(
             Guid.NewGuid(),
             domainEvent.GetType().Name,
@@ -40,22 +62,28 @@ public sealed class OutboxMessage : BaseEntity
         );
     }
 
-    public static OutboxMessage CreateIntegrationEvent(object integrationEvent)
+    // Cria mensagem a partir de IntegrationEvent
+    public static OutboxMessage CreateIntegrationEvent(IIntegrationEvent integrationEvent)
     {
+        if (integrationEvent == null)
+            throw new ArgumentNullException(nameof(integrationEvent));
+
         return new OutboxMessage(
-            Guid.NewGuid(),
-            integrationEvent.GetType().Name,
-            JsonSerializer.Serialize(integrationEvent),
-            DateTime.UtcNow
+            integrationEvent.Id,
+            integrationEvent.OccurredOnUtc,
+            integrationEvent.GetType().AssemblyQualifiedName!,
+            JsonSerializer.Serialize(integrationEvent)
         );
     }
 
+    // Marca como processada com sucesso
     public void MarkAsProcessed()
     {
         ProcessedOnUtc = DateTime.UtcNow;
         Error = null;
     }
 
+    // Marca como falha temporária
     public void MarkAsFailed(string message)
     {
         Attempts++;
@@ -65,6 +93,7 @@ public sealed class OutboxMessage : BaseEntity
 
     public bool IsProcessed => ProcessedOnUtc.HasValue;
 
+    // Lock para processamento concorrente
     public void Lock(Guid lockId, TimeSpan duration)
     {
         LockId = lockId;
@@ -77,11 +106,17 @@ public sealed class OutboxMessage : BaseEntity
         LockedUntilUtc = null;
     }
 
+    // Marca falha e libera lock
     public void MarkFailed(string message)
     {
         Attempts++;
         RetryCount++;
         Error = message;
         Unlock();
+    }
+
+    internal static IIntegrationEvent CreateIntegrationEvent(PagamentoAprovadoIntegrationEvent integrationEvent)
+    {
+        throw new NotImplementedException();
     }
 }

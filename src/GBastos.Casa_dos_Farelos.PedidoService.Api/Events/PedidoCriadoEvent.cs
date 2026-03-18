@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.Shared.Interfaces;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.IntegrationEvents;
 
 namespace GBastos.Casa_dos_Farelos.PedidoService.Api.Events;
 

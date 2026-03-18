@@ -1,5 +1,7 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Utils;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Services;
 
@@ -9,8 +11,9 @@ public sealed class ClientePessoaFisica : Cliente
         Guid id,
         string nome,
         string telefone,
-        string email)
-        : base(id, nome, telefone, email)
+        string email,
+        Cpf cpf)
+        : base(id, nome, telefone, email, TipoCliente.PessoaFisica, cpf.Numero)
     {
         ValidateInvariants();
     }
@@ -18,13 +21,22 @@ public sealed class ClientePessoaFisica : Cliente
     public static ClientePessoaFisica Criar(
         string nome,
         string telefone,
-        string email)
+        string email,
+        string cpfString)
     {
+        var cpf = Cpf.Criar(cpfString);
+
         return new ClientePessoaFisica(
             Guid.NewGuid(),
             nome,
             telefone,
-            email);
+            email,
+            cpf);
+    }
+
+    internal static object Criar(string nome, string telefone, string email)
+    {
+        throw new NotImplementedException();
     }
 
     protected override void ValidateInvariants()

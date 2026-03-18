@@ -1,7 +1,7 @@
-﻿using GBastos.Casa_dos_Farelos.PagamentoService.Application.Commands;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents.Persistence;
+using GBastos.Casa_dos_Farelos.PagamentoService.Application.Commands;
 using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Aggregates;
 using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Interfaces;
-using GBastos.Casa_dos_Farelos.SharedKernel.Persistence;
 using MediatR;
 using Microsoft.Extensions.Logging;
 

@@ -1,23 +1,44 @@
-﻿using GBastos.Casa_dos_Farelos.ComprasService.Domain.Entities;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Common;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.ComprasService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.ComprasService.Domain.Events;
-using GBastos.Casa_dos_Farelos.SharedKernel.Common;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
 
 namespace GBastos.Casa_dos_Farelos.ComprasService.Domain.Aggregates;
 
 public class Compra : AggregateRoot<Guid>
 {
     private readonly List<ItemCompra> _itens = new();
+
+    public Guid ClienteId { get; private set; }
     public StatusCompra Status { get; private set; }
+
     public IReadOnlyCollection<ItemCompra> Itens => _itens;
+
     protected Compra() : base(Guid.Empty) { }
 
-    public Compra(Guid id) : base(id)
+    private Compra(Guid id, Guid clienteId) : base(id)
     {
         if (id == Guid.Empty)
             throw new DomainException("Id inválido.");
 
+        if (clienteId == Guid.Empty)
+            throw new DomainException("Cliente inválido.");
+
+        ClienteId = clienteId;
         Status = StatusCompra.Criada;
+    }
+
+    public static Compra CriarCompra(Guid clienteId)
+    {
+        var compra = new Compra(Guid.NewGuid(), clienteId);
+
+        compra.AddDomainEvent(
+            new CompraCriadaDomainEvent(
+                compra.Id,
+                clienteId));
+
+        return compra;
     }
 
     public void AdicionarItem(
@@ -53,8 +74,7 @@ public class Compra : AggregateRoot<Guid>
                     Id,
                     item.ProdutoId,
                     item.NomeProduto,
-                    item.Quantidade
-                ));
+                    item.Quantidade));
         }
     }
 
@@ -66,30 +86,6 @@ public class Compra : AggregateRoot<Guid>
         Status = StatusCompra.Cancelada;
     }
 
-    protected override void ValidateInvariants()
-    {
-        if (Id == Guid.Empty)
-            throw new DomainException("Id da compra inválido.");
-
-        if (!Enum.IsDefined(typeof(StatusCompra), Status))
-            throw new DomainException("Status da compra inválido.");
-
-        if (_itens is null)
-            throw new DomainException("Lista de itens inválida.");
-
-        if (_itens.Any(i => i == null))
-            throw new DomainException("Compra contém item inválido.");
-
-        if (Status == StatusCompra.Finalizada && !_itens.Any())
-            throw new DomainException("Compra finalizada deve possuir itens.");
-
-        if (_itens.Any(i => i.Quantidade <= 0))
-            throw new DomainException("Item com quantidade inválida.");
-
-        if (_itens.Any(i => i.CustoUnitario.Amount <= 0))
-            throw new DomainException("Item com custo inválido.");
-    }
-
     public void AlterarQuantidadeItem(Guid itemId, int quantidade)
     {
         var item = _itens.FirstOrDefault(x => x.Id == itemId);
@@ -98,5 +94,23 @@ public class Compra : AggregateRoot<Guid>
             throw new DomainException("Item não encontrado.");
 
         item.AlterarQuantidade(quantidade);
+    }
+
+    protected override void ValidateInvariants()
+    {
+        if (Id == Guid.Empty)
+            throw new DomainException("Id da compra inválido.");
+
+        if (ClienteId == Guid.Empty)
+            throw new DomainException("Cliente inválido.");
+
+        if (!Enum.IsDefined(typeof(StatusCompra), Status))
+            throw new DomainException("Status inválido.");
+
+        if (_itens.Any(i => i.Quantidade <= 0))
+            throw new DomainException("Quantidade inválida.");
+
+        if (_itens.Any(i => i.CustoUnitario.Amount <= 0))
+            throw new DomainException("Custo inválido.");
     }
 }

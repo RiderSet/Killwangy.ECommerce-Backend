@@ -1,6 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.PedidoService.Application.Commands.CriarPedido;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents.Persistence;
+using GBastos.Casa_dos_Farelos.PedidoService.Application.Commands.CriarPedido;
 using GBastos.Casa_dos_Farelos.PedidoService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.SharedKernel.Persistence;
 
 namespace GBastos.Casa_dos_Farelos.PedidoService.Application.ConfirmarPedido;
 

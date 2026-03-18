@@ -1,6 +1,6 @@
 ﻿using GBastos.Casa_dos_Farelos.PedidoService.Api.Contracts;
-using GBastos.Casa_dos_Farelos.PedidoService.Domain.Domain.Events;
-using GBastos.Casa_dos_Farelos.SharedKernel.Interfaces.NormalEvents;
+using GBastos.Casa_dos_Farelos.PedidoService.Application.Commands.CriarPedido;
+using GBastos.Casa_dos_Farelos.PedidoService.Application.ConfirmarPedido;
 
 namespace GBastos.Casa_dos_Farelos.PedidoService.Api.Endpoints;
 
@@ -19,20 +19,15 @@ public static class PedidoEndpoints
 
     private static async Task<IResult> CriarPedidoAsync(
         CriarPedidoRequest request,
-        IEventBus eventBus)
+        CriarPedidoHandler handler)
     {
-        var evento = new PedidoCriadoEvent(
-            Guid.NewGuid(),
-            request.ClienteId,
-            request.Valor
-        );
+        var command = new CriarPedidoCommand(request.ClienteId);
 
-        await eventBus.PublishAsync(evento);
+        var pedidoId = await handler.Handle(command);
 
-        return Results.Ok(new
+        return Results.Created($"/pedido/{pedidoId}", new
         {
-            evento.PedidoId,
-            evento.Valor
+            PedidoId = pedidoId
         });
     }
 

@@ -9,9 +9,13 @@
   <ItemGroup>
     <Folder Include="DomainEvents\" />
     <Folder Include="Entities\" />
-    <Folder Include="Events\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="WriteModels\" />
     <Folder Include="ValueObjects\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,9 @@
-﻿using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
-using GBastos.Casa_dos_Farelos.Messaging.RabbitMqPublisher;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.RabbitMQ;
+using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Text.Json;
 
 namespace GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Outbox;
 
@@ -38,16 +39,18 @@ public class OutboxProcessor : BackgroundService
             {
                 try
                 {
+                    var payload = JsonSerializer.Deserialize<object>(msg.Payload);
+
                     msg.Lock(lockId, TimeSpan.FromSeconds(30));
 
                     await publisher.PublishAsync(
-                        queueName: msg.Type,
-                        message: msg.Payload,
+                        routingKey: msg.Type,
+                        payload: msg.Payload,
                         messageId: msg.Id,
                         eventType: msg.Type,
                         occurredOnUtc: msg.OccurredOnUtc,
                         version: 1,
-                        ct: stoppingToken);
+                        cancellationToken: stoppingToken);
 
                     msg.MarkAsProcessed();
                 }

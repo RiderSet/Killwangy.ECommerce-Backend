@@ -56,4 +56,11 @@ public sealed class CompraRepository : ICompraRepository
         return await _context.Compras
             .AnyAsync(x => x.Id == id, ct);
     }
+
+    public async Task<List<Compra>> ListAsync(CancellationToken ct)
+    {
+        return await _context.Compras
+            .AsNoTracking()
+            .ToListAsync(ct);
+    }
 }

@@ -1,6 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Events;
-using GBastos.Casa_dos_Farelos.SharedKernel.DomainEvents;
-using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
+using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Events;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 

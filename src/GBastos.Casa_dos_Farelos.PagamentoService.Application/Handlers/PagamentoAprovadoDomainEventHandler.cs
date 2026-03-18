@@ -1,6 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Events.Pagamentos;
-using GBastos.Casa_dos_Farelos.Shared.Interfaces;
-using GBastos.Casa_dos_Farelos.SharedKernel.IntegrationEvents;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.IntegrationEvents.Pagamentos;
+using GBastos.Casa_dos_Farelos.PagamentoService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.PagamentoService.Domain.Events.Pagamentos;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.PagamentoService.Application.Handlers;

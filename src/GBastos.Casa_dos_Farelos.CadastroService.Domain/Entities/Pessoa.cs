@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.SharedKernel.Exceptions;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 

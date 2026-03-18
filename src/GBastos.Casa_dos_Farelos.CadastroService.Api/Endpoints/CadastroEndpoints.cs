@@ -1,14 +1,20 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Veiculos;
-using MassTransit.Mediator;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Api.Contracts;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.AtualizarCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.CriarCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.RemoverCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Veiculos;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ListarClientes;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ObterCliente;
+using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
 
 public static class CadastroEndpoints
 {
-    public static IEndpointRouteBuilder MapCadastroEndpoints(
-        this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapCadastroEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("/cadastro");
+        var group = endpoints.MapGroup("/cadastro")
+            .WithTags("Cadastro");
 
         // Health
         group.MapGet("/health", Health);
@@ -30,39 +36,38 @@ public static class CadastroEndpoints
     }
 
     // HEALTH
-
     private static IResult Health()
-    {
-        return Results.Ok(new
+        => Results.Ok(new
         {
             Service = "CadastroService",
             Status = "Healthy",
             Timestamp = DateTime.UtcNow
         });
-    }
-
-    // CLIENTE
 
     private static async Task<IResult> CriarClienteAsync(
         CriarClienteRequest request,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
+        if (request is null)
+            return Results.BadRequest("Request inválido");
+
         var command = new CriarClienteCommand(
             request.Nome,
             request.Email,
             request.Documento);
 
-        var id = await mediator.Send(command);
+        var response = await mediator.Send(command, ct);
 
-        return Results.Created($"/cadastro/clientes/{id}", new { id });
+        return Results.Created($"/cadastro/clientes/{response}", new { id = response });
     }
 
     private static async Task<IResult> ObterClienteAsync(
         Guid id,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
-        var cliente = await mediator.Send(
-            new ObterClienteQuery(id));
+        var cliente = await mediator.Send(new ObterClienteQuery(id), ct);
 
         return cliente is null
             ? Results.NotFound()
@@ -70,10 +75,10 @@ public static class CadastroEndpoints
     }
 
     private static async Task<IResult> ListarClientesAsync(
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
-        var clientes = await mediator.Send(
-            new ListarClientesQuery());
+        var clientes = await mediator.Send(new ListarClientesQuery(), ct);
 
         return Results.Ok(clientes);
     }
@@ -81,50 +86,57 @@ public static class CadastroEndpoints
     private static async Task<IResult> AtualizarClienteAsync(
         Guid id,
         AtualizarClienteRequest request,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
+        if (request is null)
+            return Results.BadRequest();
+
         var command = new AtualizarClienteCommand(
             id,
             request.Nome,
             request.Email);
 
-        await mediator.Send(command);
+        await mediator.Send(command, ct);
 
         return Results.NoContent();
     }
 
     private static async Task<IResult> RemoverClienteAsync(
         Guid id,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
-        await mediator.Send(
-            new RemoverClienteCommand(id));
+        await mediator.Send(new RemoverClienteCommand(id), ct);
 
         return Results.NoContent();
     }
 
-    // VEICULO
-
     private static async Task<IResult> CriarVeiculoAsync(
         CriarVeiculoRequest request,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
+        if (request is null)
+            return Results.BadRequest();
+
         var command = new CriarVeiculoCommand(
             request.Placa,
             request.Modelo,
+            request.TipoVeiculo,
             request.ClienteId);
 
-        await mediator.Send(command);
+        await mediator.Send(command, ct);
 
-        return Results.Ok();
+        return Results.Created($"/cadastro/veiculos/{request.Placa}", request);
     }
 
     private static async Task<IResult> ObterVeiculoAsync(
         string placa,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
-        var veiculo = await mediator.Send(
-            new ObterVeiculoQuery(placa));
+        var veiculo = await mediator.Send(new ObterVeiculoQuery(placa), ct);
 
         return veiculo is null
             ? Results.NotFound()
@@ -132,20 +144,20 @@ public static class CadastroEndpoints
     }
 
     private static async Task<IResult> ListarVeiculosAsync(
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
-        var veiculos = await mediator.Send(
-            new ListarVeiculosQuery());
+        var veiculos = await mediator.Send(new ListarVeiculosQuery(), ct);
 
         return Results.Ok(veiculos);
     }
 
     private static async Task<IResult> RemoverVeiculoAsync(
         string placa,
-        IMediator mediator)
+        IMediator mediator,
+        CancellationToken ct)
     {
-        await mediator.Send(
-            new RemoverVeiculoCommand(placa));
+        await mediator.Send(new RemoverVeiculoCommand(placa), ct);
 
         return Results.NoContent();
     }

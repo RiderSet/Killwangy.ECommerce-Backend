@@ -19,9 +19,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\GBastos.Casa_dos_Farelos.ComprasService.Infrastructure\GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.csproj\GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.csproj" />
+	<ProjectReference Include="..\..\src\GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure\GBastos.Casa_dos_Farelos.PagamentoService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\GBastos.Casa_dos_Farelos.RelatorioService.Infrastructure\GBastos.Casa_dos_Farelos.RelatorioService.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\Services\EstoqueService\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

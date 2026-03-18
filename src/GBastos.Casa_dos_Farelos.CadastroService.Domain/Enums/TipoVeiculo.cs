@@ -2,6 +2,6 @@
 
 public enum TipoVeiculo
 {
-    Empresa,
-    Terceiro
+    ProprioEmpresa,
+    ParticularTerceiro
 }

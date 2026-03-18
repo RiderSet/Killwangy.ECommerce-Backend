@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Persistence.Context;
+﻿using GBastos.Casa_dos_Farelos.ComprasService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +22,7 @@ public class OutboxBackgroundService : BackgroundService
         {
             using var scope = _serviceProvider.CreateScope();
             var context = scope.ServiceProvider
-                .GetRequiredService<CadastroDbContext>();
+                .GetRequiredService<ComprasDbContext>();
 
             var messages = await context.OutboxMessages
                 .Where(x => x.ProcessedOnUtc == null)
@@ -34,7 +34,7 @@ public class OutboxBackgroundService : BackgroundService
             {
                 var type = Type.GetType(message.Type);
                 var @event = JsonSerializer.Deserialize(
-                    message.Content,
+                    message.Payload,
                     type!);
 
                 // Para publicar no broker
