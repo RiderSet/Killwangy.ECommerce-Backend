@@ -109,6 +109,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NotificacaoService", "Notif
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.BuildingBlocks.Configuration", "src\GBastos.Casa_dos_Farelos.BuildingBlocks.Configuration\GBastos.Casa_dos_Farelos.BuildingBlocks.Configuration.csproj", "{A02B9C88-8EF8-4BCA-B896-E320F8D998D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.CatalogoService.Api", "src\GBastos.Casa_dos_Farelos.CatalogoService.Api\GBastos.Casa_dos_Farelos.CatalogoService.Api.csproj", "{4BEDA43D-8C4D-45DD-940F-B530AE9EDF16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.CatalogoService.Application", "src\GBastos.Casa_dos_Farelos.CatalogoService.Application\GBastos.Casa_dos_Farelos.CatalogoService.Application.csproj", "{BA9E890C-00FF-479B-AFD5-AB5050FA5568}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.CatalogoService.Infrastructure", "src\GBastos.Casa_dos_Farelos.CatalogoService.Infrastructure\GBastos.Casa_dos_Farelos.CatalogoService.Infrastructure.csproj", "{AD8A2B5E-FFAB-4814-AAF7-1E210DFFF63D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.CatalogoService.Domain", "src\GBastos.Casa_dos_Farelos.CatalogoService.Domain\GBastos.Casa_dos_Farelos.CatalogoService.Domain.csproj", "{AB08E624-3A39-AB5F-EC60-FE2B4196B6CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -263,6 +271,22 @@ Global
 		{A02B9C88-8EF8-4BCA-B896-E320F8D998D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A02B9C88-8EF8-4BCA-B896-E320F8D998D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A02B9C88-8EF8-4BCA-B896-E320F8D998D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BEDA43D-8C4D-45DD-940F-B530AE9EDF16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BEDA43D-8C4D-45DD-940F-B530AE9EDF16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BEDA43D-8C4D-45DD-940F-B530AE9EDF16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BEDA43D-8C4D-45DD-940F-B530AE9EDF16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA9E890C-00FF-479B-AFD5-AB5050FA5568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA9E890C-00FF-479B-AFD5-AB5050FA5568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA9E890C-00FF-479B-AFD5-AB5050FA5568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA9E890C-00FF-479B-AFD5-AB5050FA5568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8A2B5E-FFAB-4814-AAF7-1E210DFFF63D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD8A2B5E-FFAB-4814-AAF7-1E210DFFF63D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8A2B5E-FFAB-4814-AAF7-1E210DFFF63D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD8A2B5E-FFAB-4814-AAF7-1E210DFFF63D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB08E624-3A39-AB5F-EC60-FE2B4196B6CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB08E624-3A39-AB5F-EC60-FE2B4196B6CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB08E624-3A39-AB5F-EC60-FE2B4196B6CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB08E624-3A39-AB5F-EC60-FE2B4196B6CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -318,6 +342,10 @@ Global
 		{5107E8E7-A277-4CFE-A5A8-7CF1ED3B02A2} = {465B0A25-C999-48ED-97DF-09DED454FE53}
 		{45C6A820-B044-43A3-9FAC-309078946C78} = {465B0A25-C999-48ED-97DF-09DED454FE53}
 		{A02B9C88-8EF8-4BCA-B896-E320F8D998D5} = {2B9FAF82-B763-42D3-AD6E-FFDFBA399F6C}
+		{4BEDA43D-8C4D-45DD-940F-B530AE9EDF16} = {5107E8E7-A277-4CFE-A5A8-7CF1ED3B02A2}
+		{BA9E890C-00FF-479B-AFD5-AB5050FA5568} = {5107E8E7-A277-4CFE-A5A8-7CF1ED3B02A2}
+		{AD8A2B5E-FFAB-4814-AAF7-1E210DFFF63D} = {5107E8E7-A277-4CFE-A5A8-7CF1ED3B02A2}
+		{AB08E624-3A39-AB5F-EC60-FE2B4196B6CC} = {5107E8E7-A277-4CFE-A5A8-7CF1ED3B02A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {992DBE31-3975-449F-816E-E75F9D0FCC7C}
