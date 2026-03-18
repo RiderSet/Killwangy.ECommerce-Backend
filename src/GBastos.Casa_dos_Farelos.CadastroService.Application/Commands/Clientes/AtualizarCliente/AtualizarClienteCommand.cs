@@ -20,11 +20,4 @@ public sealed class AtualizarClienteCommand : IRequest<Unit>
         Telefone = telefone;
         Email = email;
     }
-
-    public AtualizarClienteCommand(Guid id, string nome, string email)
-    {
-        Id = id;
-        Nome = nome;
-        Email = email;
-    }
 }

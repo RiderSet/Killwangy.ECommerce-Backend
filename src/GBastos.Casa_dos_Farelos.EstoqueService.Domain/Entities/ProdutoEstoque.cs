@@ -1,7 +1,7 @@
 ﻿
 using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Common;
 
-namespace GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
+namespace GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities;
 
 public class ProdutoEstoque : BaseEntity
 {
@@ -12,7 +12,7 @@ public class ProdutoEstoque : BaseEntity
     public DateTime AtualizadoEmUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = default!;
 
-    private ProdutoEstoque() { } // EF
+    private ProdutoEstoque() { }
 
     public ProdutoEstoque(Guid produtoId, int quantidadeInicial)
     {
@@ -65,5 +65,35 @@ public class ProdutoEstoque : BaseEntity
         QuantidadeDisponivel -= quantidade;
         QuantidadeReservada += quantidade;
         ReservaExpiraEmUtc = DateTime.UtcNow.Add(tempoReserva);
+    }
+
+    public void ExpirarReservaSeNecessario()
+    {
+        if (QuantidadeReservada == 0 || ReservaExpiraEmUtc == null)
+            return;
+
+        if (ReservaExpiraEmUtc > DateTime.UtcNow)
+            return;
+
+        QuantidadeDisponivel += QuantidadeReservada;
+        QuantidadeReservada = 0;
+        ReservaExpiraEmUtc = null;
+        AtualizadoEmUtc = DateTime.UtcNow;
+    }
+
+    public void ConfirmarReserva(int quantidade)
+    {
+        if (quantidade <= 0)
+            throw new ArgumentException("Quantidade inválida.");
+
+        if (QuantidadeReservada < quantidade)
+            throw new InvalidOperationException("Reserva insuficiente.");
+
+        QuantidadeReservada -= quantidade;
+
+        if (QuantidadeReservada == 0)
+            ReservaExpiraEmUtc = null;
+
+        AtualizadoEmUtc = DateTime.UtcNow;
     }
 }

@@ -1,6 +1,6 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 
-namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
 
 public interface IVeiculoRepository
 {
@@ -12,7 +12,7 @@ public interface IVeiculoRepository
         string placa,
         CancellationToken ct = default);
 
-    Task<List<Veiculo>> GetByClienteIdAsync(
+    Task<List<Veiculo>> GetByProprietarioIdAsync(
         Guid clienteId,
         CancellationToken ct = default);
 

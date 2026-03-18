@@ -8,4 +8,5 @@ public class ProdutoEstoque
     public int QuantidadeReservada { get; set; }
 
     public DateTime? ReservaExpiraEmUtc { get; set; }
+    public Guid Id { get; set; }
 }

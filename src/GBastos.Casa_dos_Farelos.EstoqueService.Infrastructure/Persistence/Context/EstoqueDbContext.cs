@@ -1,5 +1,4 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ public class EstoqueDbContext : DbContext
 
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     public DbSet<IdempotencyKey> IdempotencyKeys => Set<IdempotencyKey>();
-    public DbSet<ProdutoEstoque> ProdutoEstoque { get; set; }
+    public DbSet<ProdutoEstoque> ProdutoEstoque => Set<ProdutoEstoque>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CatalogoService.Infrastructure\GBastos.Casa_dos_Farelos.CatalogoService.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

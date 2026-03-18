@@ -1,9 +1,8 @@
 ﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
 using GBastos.Casa_dos_Farelos.CatalogoService.Infrastructure.Persistence;
-using MassTransit;
 using MassTransit.Mediator;
 
-namespace GBastos.Casa_dos_Farelos.CatalogoService.Domain.Events;
+namespace GBastos.Casa_dos_Farelos.CatalogoService.Application.Events;
 
 public static class DomainEventsDispatcher
 {

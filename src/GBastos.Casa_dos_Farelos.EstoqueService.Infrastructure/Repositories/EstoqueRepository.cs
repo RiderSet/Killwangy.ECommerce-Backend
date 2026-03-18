@@ -1,5 +1,6 @@
 ﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.DTOs;
 using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,7 +48,7 @@ public class EstoqueRepository : IEstoqueRepository
 
     public Task UpdateAsync(ProdutoEstoque estoque)
     {
-        _context.Produtos.Update(estoque);
+        _context.ProdutoEstoque.Update(estoque);
         return Task.CompletedTask;
     }
 

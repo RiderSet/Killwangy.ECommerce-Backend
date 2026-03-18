@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.Messaging.RabbitMqPublisher;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.RabbitMQ;
 using GBastos.Casa_dos_Farelos.PedidoService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,13 +35,13 @@ public class OutboxProcessor : BackgroundService
                 try
                 {
                     await publisher.PublishAsync(
-                        queueName: msg.Type,
-                        message: msg.Content,
+                        routingKey: msg.Type,
+                        payload: msg.Payload,
                         messageId: msg.Id,
                         eventType: msg.Type,
                         occurredOnUtc: msg.OccurredOnUtc,
                         version: 1,
-                        ct: stoppingToken);
+                        cancellationToken: stoppingToken);
 
                     msg.MarkAsProcessed();
                 }

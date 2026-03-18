@@ -14,11 +14,20 @@ public static class DependencyInjection
     {
         services.AddSingleton<IConnection>(sp =>
         {
+            var host = configuration["RabbitMQ:Host"]
+                ?? throw new InvalidOperationException("RabbitMQ:Host não configurado");
+
+            var user = configuration["RabbitMQ:User"]
+                ?? throw new InvalidOperationException("RabbitMQ:User não configurado");
+
+            var pass = configuration["RabbitMQ:Password"]
+                ?? throw new InvalidOperationException("RabbitMQ:Password não configurado");
+
             var factory = new ConnectionFactory
             {
-                HostName = configuration["RabbitMQ:Host"],
-                UserName = configuration["RabbitMQ:User"],
-                Password = configuration["RabbitMQ:Password"]
+                HostName = host,
+                UserName = user,
+                Password = pass
             };
 
             return factory.CreateConnectionAsync().GetAwaiter().GetResult();
