@@ -8,10 +8,16 @@ namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 
 public class Veiculo : AggregateRoot<Guid>
 {
-    public PlacaVeiculo Placa { get; private set; } = null!;
+    public string Marca { get; set; } = string.Empty;
     public string? Modelo { get; private set; }
-    public TipoVeiculo Tipo { get; private set; }
+    public int AnoFabricacao { get; set; }
+    public string? Cor { get; set; } = string.Empty;
+    public PlacaVeiculo Placa { get; set; } = default!;
+    public TipoVeiculo? Tipo { get; private set; }
+    public decimal ValorEstimado { get; set; }
     public Guid? ProprietarioId { get; private set; }
+
+    public bool Disponivel { get; set; } = true;
 
     private Veiculo() : base(Guid.Empty) { }
 

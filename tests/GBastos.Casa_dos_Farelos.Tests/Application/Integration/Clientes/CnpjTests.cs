@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Utils;
+using Xunit;
 
 namespace GBastos.Casa_dos_Farelos.Tests.Application.Integration.Clientes;
 

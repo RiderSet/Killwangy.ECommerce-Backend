@@ -12,6 +12,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
 	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.AuthService.Application\GBastos.Casa_dos_Farelos.AuthService.Application.csproj" />
 	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.AuthService.Domain\GBastos.Casa_dos_Farelos.AuthService.Domain.csproj" />
+	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.AuthService.Infrastructure\GBastos.Casa_dos_Farelos.AuthService.Infrastructure.csproj" />
 	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
   </ItemGroup>
 

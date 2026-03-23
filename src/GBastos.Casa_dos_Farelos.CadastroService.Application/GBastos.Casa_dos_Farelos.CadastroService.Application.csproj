@@ -14,6 +14,11 @@
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Contracts\GBastos.Casa_dos_Farelos.BuildingBlocks.Contracts.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\Clientes\Handlers\" />
   </ItemGroup>
 
 </Project>

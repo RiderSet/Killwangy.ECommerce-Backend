@@ -1,5 +1,4 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
-using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Mapping;
 using Microsoft.EntityFrameworkCore;
 

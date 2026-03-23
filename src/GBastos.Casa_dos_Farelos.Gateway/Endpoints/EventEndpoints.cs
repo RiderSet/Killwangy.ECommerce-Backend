@@ -12,8 +12,11 @@ public static class EventEndpoints
             .MapGroup("/events")
             .WithTags("Events");
 
-        group.MapPost("/publish", PublishAsync);
-        group.MapPost("/subscribe", Subscribe);
+        group.MapPost("/publish", PublishAsync)
+             .RequireAuthorization();
+
+        group.MapPost("/subscribe", Subscribe)
+             .RequireAuthorization();
 
         return endpoints;
     }

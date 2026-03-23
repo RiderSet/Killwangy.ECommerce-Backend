@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Veiculos.Handlers;
@@ -16,16 +16,21 @@ public sealed class RemoverVeiculoCommandHandler
 
     public async Task<Unit> Handle(
         RemoverVeiculoCommand request,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var veiculo = await _repository.GetByIdAsync(
-            request.VeiculoId,
-            cancellationToken);
+        var veiculo = await _repository.GetByPlacaAsync(
+            request.Placa,
+            ct);
+
+        if (veiculo is null)
+                veiculo = await _repository.GetByIdAsync(
+                request.Id,
+                ct);
 
         if (veiculo is null)
             throw new InvalidOperationException("Veículo não encontrado.");
 
-        await _repository.RemoveAsync(veiculo, cancellationToken);
+        await _repository.RemoveAsync(veiculo, ct);
 
         return Unit.Value;
     }

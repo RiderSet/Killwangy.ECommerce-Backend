@@ -2,6 +2,7 @@
 
 public enum TipoVeiculo
 {
-    ProprioEmpresa,
-    ParticularTerceiro
+    Indefinido,       // 0
+    ProprioEmpresa,   // 1
+    ParticularTerceiro // 2
 }

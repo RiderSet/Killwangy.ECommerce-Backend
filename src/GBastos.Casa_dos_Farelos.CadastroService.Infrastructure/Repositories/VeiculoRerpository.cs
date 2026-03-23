@@ -1,5 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
-using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Interfaces;
 using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 

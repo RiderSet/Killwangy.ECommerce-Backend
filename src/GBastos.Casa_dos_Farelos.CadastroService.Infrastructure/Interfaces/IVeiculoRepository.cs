@@ -1,11 +1,11 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
 
-namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
+namespace GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Interfaces;
 
 public interface IVeiculoRepository
 {
     Task<Veiculo?> GetByIdAsync(
-        Guid id,
+        Guid Id,
         CancellationToken ct = default);
 
     Task<Veiculo?> GetByPlacaAsync(

@@ -38,9 +38,7 @@ public sealed class CriarVeiculoHandler
 
         await _veiculoRepository.AddAsync(veiculo, cancellationToken);
 
-        // 5️⃣ Opcional: disparar Domain Event (já feito pelo Aggregate)
-        // veiculo.AddDomainEvent(new VeiculoCriadoEvent(veiculo.Id, veiculo.Placa.Valor));
-
+        // Retorna Unit porque handler não deve saber nada de HTTP
         return Unit.Value;
     }
 }

@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Application\GBastos.Casa_dos_Farelos.CadastroService.Application.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
   </ItemGroup>
 
