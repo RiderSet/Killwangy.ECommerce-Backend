@@ -3,4 +3,4 @@ using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Application.Queries.Produtos;
 
-public record ObterProdutoQuery(Guid Id) : IRequest<ProdutoDto?>;
+public record ListarProdutosQuery(int Page, int PageSize) : IRequest<IEnumerable<ProdutoDto>>;

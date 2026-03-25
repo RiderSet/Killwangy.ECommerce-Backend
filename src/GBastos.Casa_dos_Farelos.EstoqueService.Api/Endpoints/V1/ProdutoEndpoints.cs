@@ -1,5 +1,6 @@
 ﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Commands;
-using GBastos.Casa_dos_Farelos.EstoqueService.Application.Queries;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Enuns;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Queries.Produtos;
 using MassTransit.Mediator;
 using Microsoft.Extensions.Caching.Distributed;
 
@@ -9,8 +10,7 @@ public static class ProdutoEndpoints
 {
     public static void MapProdutoEndpointsV1(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/v1/produtos")
-            .WithTags("Produtos");
+        var group = app.MapGroup("/api/v1/produtos").WithTags("Produtos");
 
         // CRUD
         group.MapPost("/", CriarProduto);
@@ -35,179 +35,100 @@ public static class ProdutoEndpoints
 
     // ================= CRUD =================
 
-    static async Task<IResult> CriarProduto(
-        HttpContext http,
-        CriarProdutoCommand cmd,
-        IMediator mediator)
+    static async Task<IResult> CriarProduto(HttpContext http, CriarProdutoCommand cmd, IMediator mediator)
     {
-        cmd.IdempotencyKey = GetIdempotencyKey(http);
+        var idempotencyKey = http.Request.Headers.TryGetValue("Idempotency-Key", out var key) ? key.ToString() : null;
+        var cmdComIdempotency = cmd with { IdempotencyKey = idempotencyKey };
 
-        var result = await mediator.Send(cmd);
+        var result = await mediator.Send(cmdComIdempotency);
 
         return result.Success
             ? Results.Created($"/api/v1/produtos/{result.Data}", result)
             : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> ObterProduto(
-        Guid id,
-        IMediator mediator,
-        IDistributedCache cache)
+    static async Task<IResult> ObterProduto(Guid id, IMediator mediator, IDistributedCache cache)
     {
         var cacheKey = $"produto:{id}";
-
         var cached = await cache.GetStringAsync(cacheKey);
-
-        if (cached != null)
+        if (!string.IsNullOrEmpty(cached))
             return Results.Content(cached, "application/json");
 
         var result = await mediator.Send(new ObterProdutoQuery(id));
-
-        if (result == null)
-            return Results.NotFound();
-
-        return Results.Ok(result);
+        return result is not null ? Results.Ok(result) : Results.NotFound();
     }
 
-    static async Task<IResult> ListarProdutos(
-        int page,
-        int pageSize,
-        IMediator mediator)
+    static async Task<IResult> ListarProdutos(int page, int pageSize, IMediator mediator)
     {
-        var result = await mediator.Send(
-            new ListarProdutosQuery(page, pageSize));
-
+        var result = await mediator.Send(new ListarProdutosQuery(page, pageSize));
         return Results.Ok(result);
     }
 
-    static async Task<IResult> AtualizarProduto(
-        Guid id,
-        AtualizarProdutoCommand cmd,
-        IMediator mediator)
+    static async Task<IResult> AtualizarProduto(Guid id, AtualizarProdutoCommand cmd, IMediator mediator)
     {
         cmd.Id = id;
-
         var result = await mediator.Send(cmd);
-
-        return result.Success
-            ? Results.NoContent()
-            : Results.Problem(result.Error);
+        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> RemoverProduto(
-        Guid id,
-        IMediator mediator)
+    static async Task<IResult> RemoverProduto(Guid id, IMediator mediator)
     {
-        var result = await mediator.Send(
-            new RemoverProdutoCommand(id));
-
-        return result.Success
-            ? Results.NoContent()
-            : Results.Problem(result.Error);
+        var result = await mediator.Send(new RemoverProdutoCommand(id));
+        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
     }
 
     // ================= STATUS =================
 
-    static async Task<IResult> AtivarProduto(
-        Guid id,
-        IMediator mediator)
+    static async Task<IResult> AtivarProduto(Guid id, IMediator mediator)
     {
-        var result = await mediator.Send(
-            new AtivarProdutoCommand(id));
-
-        return result.Success
-            ? Results.NoContent()
-            : Results.Problem(result.Error);
+        var result = await mediator.Send(new AtivarProdutoCommand(id));
+        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> DesativarProduto(
-        Guid id,
-        IMediator mediator)
+    static async Task<IResult> DesativarProduto(Guid id, IMediator mediator)
     {
-        var result = await mediator.Send(
-            new DesativarProdutoCommand(id));
-
-        return result.Success
-            ? Results.NoContent()
-            : Results.Problem(result.Error);
+        var result = await mediator.Send(new DesativarProdutoCommand(id));
+        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
     }
 
     // ================= ESTOQUE =================
 
-    static async Task<IResult> AdicionarEstoque(
-        Guid id,
-        AjustarEstoqueCommand cmd,
-        IMediator mediator)
+    static async Task<IResult> AdicionarEstoque(Guid id, AjustarEstoqueCommand cmd, IMediator mediator)
     {
         cmd.ProdutoId = id;
         cmd.Tipo = TipoAjusteEstoque.Entrada;
 
         var result = await mediator.Send(cmd);
-
-        return result.Success
-            ? Results.Ok(result)
-            : Results.Problem(result.Error);
+        return result.Success ? Results.Ok(result) : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> RemoverEstoque(
-        Guid id,
-        AjustarEstoqueCommand cmd,
-        IMediator mediator)
+    static async Task<IResult> RemoverEstoque(Guid id, AjustarEstoqueCommand cmd, IMediator mediator)
     {
         cmd.ProdutoId = id;
         cmd.Tipo = TipoAjusteEstoque.Saida;
 
         var result = await mediator.Send(cmd);
-
-        return result.Success
-            ? Results.Ok(result)
-            : Results.Problem(result.Error);
+        return result.Success ? Results.Ok(result) : Results.Problem(result.Error);
     }
 
     // ================= RESERVA =================
 
-    static async Task<IResult> ReservarProduto(
-        Guid id,
-        ReservarProdutoCommand cmd,
-        IMediator mediator)
+    static async Task<IResult> ReservarProduto(Guid id, ReservarProdutoCommand cmd, IMediator mediator)
     {
         cmd.ProdutoId = id;
-
         var result = await mediator.Send(cmd);
-
-        return result.Success
-            ? Results.Ok(result)
-            : Results.Problem(result.Error);
+        return result.Success ? Results.Ok(result) : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> ConfirmarReserva(
-        Guid reservaId,
-        IMediator mediator)
+    static async Task<IResult> ConfirmarReserva(Guid reservaId, IMediator mediator)
     {
-        var result = await mediator.Send(
-            new ConfirmarReservaCommand(reservaId));
-
-        return result.Success
-            ? Results.NoContent()
-            : Results.Problem(result.Error);
+        var result = await mediator.Send(new ConfirmarReservaCommand(reservaId));
+        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> CancelarReserva(
-        Guid reservaId,
-        IMediator mediator)
+    static async Task<IResult> CancelarReserva(Guid reservaId, IMediator mediator)
     {
-        var result = await mediator.Send(
-            new CancelarReservaCommand(reservaId));
-
-        return result.Success
-            ? Results.NoContent()
-            : Results.Problem(result.Error);
-    }
-
-    // ================= HELPERS =================
-
-    static string GetIdempotencyKey(HttpContext http)
-    {
-        return http.Request.Headers["Idempotency-Key"];
+        var result = await mediator.Send(new CancelarReservaCommand(reservaId));
+        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
     }
 }

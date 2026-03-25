@@ -10,29 +10,49 @@ public class CriarProdutoHandler
     : IRequestHandler<CriarProdutoCommand, Result<Guid>>
 {
     private readonly IProdutoRepository _repo;
+    private readonly RedisLockHandle _lock;
 
-    public CriarProdutoHandler(IProdutoRepository repo)
+    public CriarProdutoHandler(
+        IProdutoRepository repo,
+        RedisLockHandle redisLock)
     {
         _repo = repo;
+        _lock = redisLock;
     }
 
     public async Task<Result<Guid>> Handle(
         CriarProdutoCommand request,
         CancellationToken ct)
     {
-        var produto = new Produto(
-            request.Nome,
-            request.Descricao,
-            request.PrecoVenda,
-            request.PrecoCompra,
-            request.CategoriaId,
-            request.QuantEstoque
-        );
+        var lockKey = $"produto:create:{request.IdempotencyKey ?? request.Nome}";
 
-        _repo.Add(produto);
+        var acquired = await _lock.AcquireLockAsync(
+            lockKey,
+            TimeSpan.FromSeconds(15));
 
-        await _repo.SaveChangesAsync(ct);
+        if (!acquired)
+            return Result<Guid>.Fail("Operação duplicada detectada.");
 
-        return Result<Guid>.Ok(produto.Id);
+        try
+        {
+            var produto = new Produto(
+                request.Nome,
+                request.Descricao,
+                request.PrecoVenda,
+                request.PrecoCompra,
+                request.CategoriaId,
+                request.QuantEstoque
+            );
+
+            _repo.Add(produto);
+
+            await _repo.SaveChangesAsync(ct);
+
+            return Result<Guid>.Ok(produto.Id);
+        }
+        finally
+        {
+            await _lock.ReleaseLockAsync(lockKey);
+        }
     }
 }

@@ -6,8 +6,9 @@ namespace GBastos.Casa_dos_Farelos.EstoqueService.Application.Commands;
 public record CriarProdutoCommand(
     string Nome,
     string Descricao,
+    string? IdempotencyKey,
     decimal PrecoVenda,
     decimal PrecoCompra,
     Guid CategoriaId,
     int QuantEstoque
-    ) : IRequest<Result<Guid>>;
+) : IRequest<Result<Guid>>;

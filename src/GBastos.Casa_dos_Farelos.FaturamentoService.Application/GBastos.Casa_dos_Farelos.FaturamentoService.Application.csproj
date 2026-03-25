@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="IdenpotencyBehavior\" />
+    <Folder Include="Validation\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.FaturamentoService.Domain\GBastos.Casa_dos_Farelos.FaturamentoService.Domain.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure\GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

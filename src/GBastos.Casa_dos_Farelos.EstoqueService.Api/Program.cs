@@ -1,10 +1,14 @@
 using GBastos.Casa_dos_Farelos.EstoqueService.Api.Endpoints.V1;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Behavior;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Handlers;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.Reflection;
+using System.Text;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +26,8 @@ builder.Services.AddCors(opt =>
     });
 });
 
+builder.Services.AddScoped<RedisLockHandle>();
+
 builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("fixed", opt =>
@@ -38,14 +44,11 @@ builder.Services.AddStackExchangeRedisCache(opt =>
     opt.Configuration = configuration.GetConnectionString("Redis");
 });
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddMediatR(typeof(CriarProdutoHandler).Assembly);
 
-    // cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-    // cfg.AddOpenBehavior(typeof(IdempotencyBehavior<,>));
-    // cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
-});
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(IdempotencyBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 var jwtKey = configuration["Jwt:Key"] ?? "SUPER_SECRET_KEY_CHANGE_ME";
 
@@ -70,6 +73,10 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddTransient(
+    typeof(IPipelineBehavior<,>),
+    typeof(LoggingBehavior<,>)
+);
 
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -80,21 +87,6 @@ builder.Services.AddSwaggerGen(opt =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header
-    });
-
-    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new List<string>()
-        }
     });
 });
 
@@ -107,8 +99,11 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseExceptionHandler(error =>
 {
@@ -132,8 +127,11 @@ app.UseExceptionHandler(error =>
 
 app.MapHealthChecks("/health");
 
-app.MapProdutoEndpointsV1()
-   .RequireRateLimiting("fixed")
-   .RequireAuthorization();
+app.MapProdutoEndpointsV1();
+
+var group = app.MapGroup("/api/v1/produtos")
+    .RequireAuthorization()
+    .RequireRateLimiting("fixed")
+    .WithTags("Produtos");
 
 app.Run();

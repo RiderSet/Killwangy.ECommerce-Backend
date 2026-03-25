@@ -12,6 +12,7 @@
 		<PackageReference Include="Azure.Data.AppConfiguration" Version="1.9.0" />
 		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.5.0" />
 		<PackageReference Include="Azure.Identity" Version="1.19.0" />
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.12" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
@@ -38,6 +39,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Configuration\GBastos.Casa_dos_Farelos.BuildingBlocks.Configuration.csproj" />
 	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
+	  <ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Application\GBastos.Casa_dos_Farelos.EstoqueService.Application.csproj" />
 	</ItemGroup>
 
 </Project>

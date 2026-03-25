@@ -7,11 +7,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.12">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.12" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.1.5" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.12" />
+    <PackageReference Include="System.Threading.RateLimiting" Version="10.0.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure\GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.FaturamentoService.Application\GBastos.Casa_dos_Farelos.FaturamentoService.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Filters\" />
   </ItemGroup>
 
 </Project>
