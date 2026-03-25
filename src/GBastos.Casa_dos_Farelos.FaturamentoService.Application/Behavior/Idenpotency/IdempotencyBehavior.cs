@@ -23,7 +23,8 @@ public class IdempotencyBehavior<TRequest, TResponse>
 
         if (await _store.ExistsAsync(key))
         {
-            return default!;
+            throw new InvalidOperationException(
+                "Duplicate command detected");
         }
 
         var response = await next();

@@ -10,8 +10,6 @@ using GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.Messaging.Consu
 using GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -53,12 +51,24 @@ builder.Services.AddStackExchangeRedisCache(opt =>
 
 builder.Services.AddDbContext<FaturamentoDbContext>(opt =>
 {
-    opt.UseSqlServer(
-        configuration.GetConnectionString("Default"));
+    opt.UseSqlServer(configuration.GetConnectionString("Default"));
 });
 
 builder.Services.AddScoped<IIdempotencyStore, RedisIdempotencyStore>();
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(EmitirFaturaHandler).Assembly);
+    cfg.AddOpenBehavior(typeof(IdempotencyBehavior<,>));
+});
+
 builder.Services.AddValidatorsFromAssemblyContaining<EmitirFaturaCommandValidator>();
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiExceptionFilter>();
+    options.Filters.Add<ValidationFilter>();
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
@@ -99,12 +109,6 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddHostedService<FaturamentoConsumer>();
 builder.Services.AddHealthChecks();
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ApiExceptionFilter>();
-    options.Filters.Add<ValidationFilter>();
-});
-
 #region RabbitMQ
 
 builder.Services.AddSingleton<IConnection>(sp =>
@@ -123,6 +127,15 @@ builder.Services.AddSingleton<IConnection>(sp =>
                   .GetResult();
 });
 
+builder.Services.AddSingleton<IChannel>(sp =>
+{
+    var connection = sp.GetRequiredService<IConnection>();
+
+    return connection.CreateChannelAsync()
+                     .GetAwaiter()
+                     .GetResult();
+});
+
 builder.Services.AddSingleton<IEventPublisher, RabbitMqPublisher>();
 
 #endregion
@@ -139,14 +152,7 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-builder.Services.AddSingleton<IChannel>(sp =>
-{
-    var connection = sp.GetRequiredService<IConnection>();
-
-    return connection.CreateChannelAsync()
-                     .GetAwaiter()
-                     .GetResult();
-});
+app.MapControllers();
 
 app.MapHealthChecks("/health");
 
