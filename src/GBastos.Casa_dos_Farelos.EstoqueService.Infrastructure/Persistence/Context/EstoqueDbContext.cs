@@ -2,7 +2,6 @@
 using GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
-using Categoria = GBastos.Casa_dos_Farelos.EstoqueService.Domain.Entities.Categoria;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Persistence.Context;
 

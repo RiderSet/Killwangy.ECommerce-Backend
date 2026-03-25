@@ -1,6 +1,6 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.DTOs;
-using GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
 using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ListarClientes;
+using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Interfaces;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.Handlers;

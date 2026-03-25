@@ -1,8 +1,8 @@
-﻿using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Interfaces;
+﻿using MediatR;
 
-namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Commands.CancelarFatura;
+namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Commands.EmitirFatura;
 
 public record CancelarFaturaCommand(
-    Guid Id,
+    Guid FaturaId,
     string IdempotencyKey
-) : IIdempotentCommand<Guid>;
+) : IRequest<Unit>;

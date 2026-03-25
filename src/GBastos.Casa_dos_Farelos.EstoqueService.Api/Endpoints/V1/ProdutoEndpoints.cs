@@ -1,5 +1,4 @@
 ﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Commands;
-using GBastos.Casa_dos_Farelos.EstoqueService.Application.Enuns;
 using GBastos.Casa_dos_Farelos.EstoqueService.Application.Queries.Produtos;
 using MassTransit.Mediator;
 using Microsoft.Extensions.Caching.Distributed;

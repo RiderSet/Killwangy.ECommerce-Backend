@@ -4,6 +4,7 @@ public record FaturaDto(
     Guid Id,
     string Numero,
     DateTime DataEmissao,
+    DateTime DataVencimento,
     string Status,
     decimal ValorTotal,
     IReadOnlyCollection<ItemFaturaDto> Itens

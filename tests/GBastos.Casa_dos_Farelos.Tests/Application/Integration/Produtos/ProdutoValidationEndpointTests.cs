@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Request;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;
 using System.Net.Http.Json;
-using static GBastos.Casa_dos_Farelos.Api.Endpoints.Produtos.ProdutoEndpoints;
 
 namespace GBastos.Casa_dos_Farelos.Tests.Application.Integration.Produtos
 {
@@ -26,7 +26,7 @@ namespace GBastos.Casa_dos_Farelos.Tests.Application.Integration.Produtos
             var request = new CreateProdutoRequest(
                 Nome: "Ração",
                 Descricao: "Ração para cães",
-                Preco: 0m,      // preço inválido
+                Preco: 0m,
                 QuantEstoque: 10,
                 CategoriaId: _mockCategoriaId
             );

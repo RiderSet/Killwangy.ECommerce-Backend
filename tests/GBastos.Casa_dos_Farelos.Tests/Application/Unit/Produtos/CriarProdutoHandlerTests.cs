@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
-using GBastos.Casa_dos_Farelos.Application.Commands.Produtos.CriarProduto;
-using GBastos.Casa_dos_Farelos.Application.Commands.Produtos.CriarProduto.Handlers;
-using GBastos.Casa_dos_Farelos.Application.Interfaces;
-using GBastos.Casa_dos_Farelos.Domain.Entities;
-using GBastos.Casa_dos_Farelos.Infrastructure.Interfaces;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Commands;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Handlers;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Interfaces;
 using Moq;
 
 namespace GBastos.Casa_dos_Farelos.Tests.Application.Unit.Produtos;
@@ -13,21 +12,19 @@ public class CriarProdutoHandlerTests
     [Fact]
     public async Task Deve_criar_produto_com_sucesso()
     {
-        // Arrange
         var repoMock = new Mock<IProdutoRepository>();
-        var uowMock = new Mock<IUnitOfWork>();
 
-        // Mock CommitAsync para retornar Task.CompletedTask
-        uowMock.Setup(u => u.CommitAsync(It.IsAny<CancellationToken>()))
-               .Returns(Task.CompletedTask);
+        var redisLockMock = new Mock<RedisLockHandle>();
 
-        var handler = new CriarProdutoHandler(repoMock.Object, uowMock.Object);
+        var handler = new CriarProdutoHandler(repoMock.Object, redisLockMock.Object);
 
         var categoriaId = Guid.NewGuid();
         var command = new CriarProdutoCommand(
             "Ração",
             "Ração para cães",
+            "Blá, blá, blá, blá, blá, blá, blá, blá, blá, blá, blá,...",
             10m,
+            15m,
             categoriaId,
             5
         );
@@ -36,8 +33,7 @@ public class CriarProdutoHandlerTests
         var id = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        id.Should().NotBeEmpty();
+        id.Should().NotBe(Guid.Empty);
         repoMock.Verify(r => r.AddAsync(It.IsAny<Produto>(), It.IsAny<CancellationToken>()), Times.Once);
-        uowMock.Verify(u => u.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 }

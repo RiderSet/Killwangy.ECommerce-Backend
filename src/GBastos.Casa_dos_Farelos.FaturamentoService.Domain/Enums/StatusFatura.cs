@@ -2,7 +2,9 @@
 
 public enum StatusFatura
 {
-    Rascunho = 0,
-    Emitida = 1,
-    Cancelada = 2
+    Paga = 0,
+    Vencida = 1,
+    Rascunho = 2,
+    Emitida = 3,
+    Cancelada = 4
 }

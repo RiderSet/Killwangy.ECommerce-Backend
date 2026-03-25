@@ -1,18 +1,16 @@
-﻿namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Validatiors;
+﻿using FluentValidation;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Commands.EmitirFatura;
 
-public class CriarFaturaCommandValidator
-    : AbstractValidator<CriarFaturaCommand>
+namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Validatiors;
+
+public class CriarFaturaCommandValidator : AbstractValidator<CriarFaturaCommand>
 {
     public CriarFaturaCommandValidator()
     {
-        RuleFor(x => x.Numero)
-            .NotEmpty()
-            .WithMessage("Número da fatura é obrigatório.")
-            .MaximumLength(50);
-
-        RuleFor(x => x.IdempotencyKey)
-            .NotEmpty()
-            .WithMessage("IdempotencyKey é obrigatória.")
-            .MaximumLength(100);
+        RuleFor(x => x.Numero).NotEmpty();
+        RuleFor(x => x.ClienteId).NotEmpty();
+        RuleFor(x => x.DataVencimento).GreaterThan(DateTime.MinValue);
+        RuleFor(x => x.ValorTotal).GreaterThan(0);
+        RuleFor(x => x.IdempotencyKey).NotEmpty();
     }
 }

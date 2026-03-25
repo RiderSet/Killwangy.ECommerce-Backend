@@ -1,20 +1,22 @@
-﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.Interfaces;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
 using GBastos.Casa_dos_Farelos.FaturamentoService.Domain.Events.Publish;
 using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
-public class FaturaCanceladaHandler
+namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Events;
+
+public sealed class FaturaCanceladaHandler
     : INotificationHandler<FaturaCanceladaEvent>
 {
     private readonly ILogger<FaturaCanceladaHandler> _logger;
     private readonly IDistributedCache _cache;
-    private readonly IRabbitMQPublisher _publisher;
+    private readonly IEventPublisher _publisher;
 
     public FaturaCanceladaHandler(
         ILogger<FaturaCanceladaHandler> logger,
         IDistributedCache cache,
-        IRabbitMQPublisher publisher)
+        IEventPublisher publisher)
     {
         _logger = logger;
         _cache = cache;
@@ -54,14 +56,31 @@ public class FaturaCanceladaHandler
         FaturaCanceladaEvent notification,
         CancellationToken cancellationToken)
     {
+        // Construa o payload (por exemplo JSON)
+        var payload = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            notification.FaturaId,
+            notification.Numero,
+            notification.Motivo
+        });
+
+        // Defina o routingKey e eventType conforme padrão do seu sistema
+        string routingKey = "fatura.cancelada";
+        string eventType = nameof(FaturaCanceladaEvent);
+
         await _publisher.PublishAsync(
-            exchange: "faturamento.events",
-            routingKey: "fatura.cancelada",
-            message: notification,
-            cancellationToken);
+            routingKey: routingKey,
+            payload: payload,
+            messageId: notification.MessageId,      // precisa existir no evento
+            eventType: eventType,
+            occurredOnUtc: notification.OccurredOnUtc,
+            version: 1,                              // defina versão do evento
+            cancellationToken: cancellationToken
+        );
 
         _logger.LogInformation(
-            "Evento publicado RabbitMQ: fatura.cancelada {Numero}",
+            "Evento publicado: {RoutingKey} {Numero}",
+            routingKey,
             notification.Numero);
     }
 }

@@ -1,23 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="FluentValidation" Version="11.6.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.csproj" />
-    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Domain\GBastos.Casa_dos_Farelos.EstoqueService.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel\GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.csproj" />
+		<ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Domain\GBastos.Casa_dos_Farelos.EstoqueService.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

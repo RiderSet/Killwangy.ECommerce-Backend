@@ -1,5 +1,5 @@
 ﻿using GBastos.Casa_dos_Farelos.FaturamentoService.Application.DTOs;
-using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Queries.GetFaturas;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Queries.ObtertFaturas;
 using GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.Persistence.Context;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Handlers;
 
 public class GetFaturaByIdQueryHandler
-    : IRequestHandler<GetFaturaByIdQuery, FaturaDto?>
+    : IRequestHandler<ObterFaturaPorIdQuery, FaturaDto?>
 {
     private readonly FaturamentoDbContext _context;
 
@@ -17,7 +17,7 @@ public class GetFaturaByIdQueryHandler
     }
 
     public async Task<FaturaDto?> Handle(
-        GetFaturaByIdQuery request,
+        ObterFaturaPorIdQuery request,
         CancellationToken cancellationToken)
     {
         return await _context.Faturas
@@ -26,6 +26,7 @@ public class GetFaturaByIdQueryHandler
                 x.Id,
                 x.Numero,
                 x.DataEmissao,
+                x.DataVencimento,
                 x.Status.ToString(),
                 x.ValorTotal,
                 x.Itens.Select(i => new ItemFaturaDto(

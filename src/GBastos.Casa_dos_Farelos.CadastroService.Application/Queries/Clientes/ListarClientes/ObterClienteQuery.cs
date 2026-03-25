@@ -5,10 +5,10 @@ namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.
 
 public sealed class ObterClienteQuery : IRequest<ClienteDto>
 {
-    public Guid Id { get; }
+    public Guid ClienteId { get; }
 
     public ObterClienteQuery(Guid id)
     {
-        Id = id;
+        ClienteId = id;
     }
 }

@@ -1,8 +1,8 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.DTOs;
-using GBastos.Casa_dos_Farelos.CadastroService.Application.Interfaces;
 using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Veiculos.ObterVeiculo;
 using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
+using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Interfaces;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Veiculos.Handlers;

@@ -1,10 +1,4 @@
-﻿namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
-using global::GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.AtualizarCliente;
-using global::GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.CriarCliente;
-using global::GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.RemoverCliente;
-using global::GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ListarClientes;
-using global::GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ObterCliente;
-using MediatR;
+﻿using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
 

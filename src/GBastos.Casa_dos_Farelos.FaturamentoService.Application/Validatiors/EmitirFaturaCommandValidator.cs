@@ -1,4 +1,5 @@
-﻿using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Commands.EmitirFatura;
+﻿using FluentValidation;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Commands.EmitirFatura;
 
 namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Validatiors;
 

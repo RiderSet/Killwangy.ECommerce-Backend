@@ -80,6 +80,8 @@ builder.Services.AddTransient(
 
 builder.Services.AddSwaggerGen(opt =>
 {
+    opt.SchemaFilter<GBastos.Casa_dos_Farelos.EstoqueService.Api.Swagger.CustomSchemaFilter>();
+
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

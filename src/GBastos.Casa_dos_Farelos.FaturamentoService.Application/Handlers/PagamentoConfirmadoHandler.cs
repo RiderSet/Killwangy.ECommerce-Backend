@@ -34,7 +34,6 @@ public class PagamentoConfirmadoHandler
     private Fatura GerarFatura(PagamentoConfirmadoEvent notification)
     {
         var numero = $"FAT-{DateTime.UtcNow:yyyyMMddHHmmss}";
-
         var fatura = new Fatura(numero);
 
         // exemplo simples: valor total vindo do pagamento

@@ -7,4 +7,5 @@ public interface IProdutoRepository
     Task<Produto?> GetByIdAsync(Guid id);
     void Add(Produto produto);
     Task SaveChangesAsync(CancellationToken ct);
+    void AddAsync(Produto produto, CancellationToken cancellationToken);
 }
