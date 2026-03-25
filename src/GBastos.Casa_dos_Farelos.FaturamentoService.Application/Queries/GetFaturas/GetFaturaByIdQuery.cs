@@ -1,5 +1,7 @@
-﻿namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Queries.GetFaturas;
+﻿using GBastos.Casa_dos_Farelos.FaturamentoService.Application.DTOs;
+using MediatR;
 
-public class GetFaturaByIdQuery
-{
-}
+namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Queries.GetFaturas;
+
+public record GetFaturaByIdQuery(Guid Id)
+    : IRequest<FaturaDto>;
