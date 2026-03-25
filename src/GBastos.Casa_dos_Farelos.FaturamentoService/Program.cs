@@ -1,6 +1,11 @@
+using FluentValidation;
 using GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.RabbitMQ;
 using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Interfaces.NormalEvents;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Api.Filters;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Behavior.Idenpotency;
 using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Handlers;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Interfaces;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Validatiors;
 using GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.Messaging.Consumer;
 using GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.Persistence.Context;
 using MediatR;
@@ -52,10 +57,8 @@ builder.Services.AddDbContext<FaturamentoDbContext>(opt =>
         configuration.GetConnectionString("Default"));
 });
 
-builder.Services.AddMediatR(cfg =>
-{
-    cfg.RegisterServicesFromAssembly(typeof(PagamentoConfirmadoHandler).Assembly);
-});
+builder.Services.AddScoped<IIdempotencyStore, RedisIdempotencyStore>();
+builder.Services.AddValidatorsFromAssemblyContaining<EmitirFaturaCommandValidator>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opt =>
@@ -95,6 +98,12 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddHostedService<FaturamentoConsumer>();
 builder.Services.AddHealthChecks();
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiExceptionFilter>();
+    options.Filters.Add<ValidationFilter>();
+});
 
 #region RabbitMQ
 

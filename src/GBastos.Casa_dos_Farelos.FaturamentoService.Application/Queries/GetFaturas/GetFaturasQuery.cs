@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Queries
+namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Queries.GetFaturas
 {
-    internal class GetFaturaByIdQuery
+    internal class GetFaturasQuery
     {
     }
 }

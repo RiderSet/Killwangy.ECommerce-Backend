@@ -34,8 +34,4 @@
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.FaturamentoService.Application\GBastos.Casa_dos_Farelos.FaturamentoService.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Filters\" />
-  </ItemGroup>
-
 </Project>
