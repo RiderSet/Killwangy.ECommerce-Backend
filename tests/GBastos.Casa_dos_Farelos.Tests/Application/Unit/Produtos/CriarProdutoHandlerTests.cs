@@ -20,13 +20,13 @@ public class CriarProdutoHandlerTests
         var categoriaId = Guid.NewGuid();
 
         var command = new CriarProdutoCommand(
-            "Ração",
+            "Ração",          
             "Ração para cães",
-            "Descrição longa...",
-            10m,
-            15m,
+            10m,              
+            15m,  
+            5,
             categoriaId,
-            5
+            null              
         );
 
         var result = await handler.Handle(command, CancellationToken.None);

@@ -29,6 +29,7 @@ public class CriarProdutoHandler : IRequestHandler<CriarProdutoCommand, Result<G
         var estoqueProduto = ProdutoMapper.ToEstoqueProduto(cadastroProduto);
 
         await _estoqueRepository.AddAsync(estoqueProduto, cancellationToken);
+    //  Task                     AddAsync(ProdutoEstoque estoqueProduto, CancellationToken cancellationToken = default);
 
         return Result<Guid>.Ok(cadastroProduto.Id);
     }

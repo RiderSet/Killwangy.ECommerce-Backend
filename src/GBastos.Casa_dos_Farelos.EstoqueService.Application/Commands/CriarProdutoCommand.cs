@@ -8,7 +8,7 @@ public record CriarProdutoCommand(
     string Descricao,
     decimal PrecoVenda,
     decimal PrecoCompra,
-    Guid CategoriaId,
     int QuantEstoque,
+    Guid CategoriaId,
     string? IdempotencyKey = null
 ) : IRequest<Result<Guid>>;

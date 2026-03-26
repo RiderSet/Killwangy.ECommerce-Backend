@@ -38,7 +38,7 @@ public class CriarProdutoHandler
             var produto = new Produto(
                 request.Nome,
                 request.Descricao,
-                request.PrecoVenda,
+                request.PrecoVenda,           
                 request.PrecoCompra,
                 request.CategoriaId,
                 request.QuantEstoque
