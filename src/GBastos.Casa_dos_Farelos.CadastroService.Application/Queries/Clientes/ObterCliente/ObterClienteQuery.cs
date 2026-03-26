@@ -3,4 +3,5 @@ using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ObterCliente;
 
-public record ObterClienteQuery(Guid ClienteId) : IRequest<ClienteDto?>;
+public sealed record ObterClienteQuery(Guid Id)
+    : IRequest<ClienteDto?>;

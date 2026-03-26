@@ -1,6 +1,7 @@
 ﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Abstractions;
 using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Exceptions;
 using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Utils;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
 using GBastos.Casa_dos_Farelos.CadastroService.Domain.Enums;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Domain.Aggregates;
@@ -92,8 +93,24 @@ public abstract class Cliente : AggregateRoot<Guid>
         }
     }
 
-    public static Cliente Criar(string nome, string telefone, string email, TipoCliente tipoCliente, string documento)
+    public static Cliente Criar(
+        string nome,
+        string telefone,
+        string email,
+        TipoCliente tipoCliente,
+        string documento)
     {
-        throw new NotImplementedException();
+        var id = Guid.NewGuid();
+
+        return tipoCliente switch
+        {
+            TipoCliente.PessoaFisica =>
+                new ClientePF(id, nome, telefone, email, documento),
+
+            TipoCliente.PessoaJuridica =>
+                new ClientePJ(id, nome, telefone, email, documento),
+
+            _ => throw new DomainException("Tipo de cliente inválido")
+        };
     }
 }

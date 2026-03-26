@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GBastos.Casa_dos_Farelos.FaturamentoService.Application.Request;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 using System.Net;

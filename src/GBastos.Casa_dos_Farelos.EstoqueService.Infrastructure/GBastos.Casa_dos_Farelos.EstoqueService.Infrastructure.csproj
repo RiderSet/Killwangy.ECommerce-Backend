@@ -10,7 +10,6 @@
     <PackageReference Include="RedLock.net" Version="2.3.2" />
     <PackageReference Include="SonPhat.RedLockNet.SERedis" Version="1.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.11.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.3" />
   </ItemGroup>
 
   <ItemGroup>

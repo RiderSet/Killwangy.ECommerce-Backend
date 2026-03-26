@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using GBastos.Casa_dos_Farelos.CadastroService.Application.Events;
 using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Events;
 
 namespace GBastos.Casa_dos_Farelos.Tests.Application.Integration.Clientes;
 
@@ -21,7 +21,7 @@ public class ClientePessoaFisicaTests
         cliente.Id.Should().Be(id);
         cliente.Nome.Should().Be("Gil Bastos");
         cliente.Email.Should().Be("gil@email.com");
-        cliente.Cpf.Numero.Should().Be("52998224725");
+        cliente.Cpf!.Numero.Should().Be("52998224725");
         cliente.DomainEvents.Should().ContainSingle();
     }
 

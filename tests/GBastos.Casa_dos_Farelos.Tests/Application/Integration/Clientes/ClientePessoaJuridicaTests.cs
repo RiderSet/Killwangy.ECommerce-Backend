@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using GBastos.Casa_dos_Farelos.CadastroService.Application.Events;
 using GBastos.Casa_dos_Farelos.CadastroService.Domain.Entities;
+using GBastos.Casa_dos_Farelos.CadastroService.Domain.Events;
 
 namespace GBastos.Casa_dos_Farelos.Tests.Application.Integration.Clientes;
 
@@ -19,7 +19,7 @@ public class ClientePessoaJuridicaTests
             "45723174000110");
 
         cliente.Id.Should().Be(id);
-        cliente.Cnpj.Numero.Should().Be("45723174000110");
+        cliente.Cnpj!.Numero.Should().Be("45723174000110");
         cliente.DomainEvents.Should().ContainSingle();
     }
 

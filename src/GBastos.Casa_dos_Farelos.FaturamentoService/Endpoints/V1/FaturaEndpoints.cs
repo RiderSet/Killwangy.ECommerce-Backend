@@ -60,8 +60,7 @@ namespace GBastos.Casa_dos_Farelos.FaturamentoService.Api.Endpoints.V1
             [FromBody] AtualizarFaturaCommand command,
             [FromServices] ISender sender)
         {
-            command.Id = id;
-            await sender.Send(command);
+            await sender.Send(command with { Id = id });
             return Results.NoContent();
         }
 

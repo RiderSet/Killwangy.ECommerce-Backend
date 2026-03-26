@@ -9,6 +9,7 @@ namespace GBastos.Casa_dos_Farelos.EstoqueService.Infrastructure.Repositories;
 public class EstoqueRepository : IEstoqueRepository
 {
     private readonly EstoqueDbContext _context;
+
     public int QuantidadeReservada { get; private set; }
     public DateTime? ReservaExpiraEmUtc { get; private set; }
 
@@ -17,23 +18,20 @@ public class EstoqueRepository : IEstoqueRepository
         _context = context;
     }
 
-    public async Task<ProdutoEstoque?> GetByProdutoIdAsync(Guid produtoId)
+    public async Task<ProdutoEstoque?> GetByProdutoIdAsync(Guid produtoId, CancellationToken cancellationToken = default)
     {
         return await _context.ProdutoEstoque
-            .FirstOrDefaultAsync(x => x.Id == produtoId);
+            .FirstOrDefaultAsync(x => x.Id == produtoId, cancellationToken);
     }
 
-    public async Task<List<OutboxMessageDto>> GetUnprocessedAsync(
-        int take,
-        CancellationToken ct)
+    public async Task<List<OutboxMessageDto>> GetUnprocessedAsync(int take, CancellationToken ct)
     {
         var now = DateTime.UtcNow;
 
         return await _context.OutboxMessages
             .Where(x =>
                 x.ProcessedOnUtc == null &&
-                (x.LockedUntilUtc == null ||
-                 x.LockedUntilUtc < now))
+                (x.LockedUntilUtc == null || x.LockedUntilUtc < now))
             .OrderBy(x => x.OccurredOnUtc)
             .Take(take)
             .Select(x => new OutboxMessageDto
@@ -46,18 +44,29 @@ public class EstoqueRepository : IEstoqueRepository
             .ToListAsync(ct);
     }
 
-    public Task UpdateAsync(ProdutoEstoque estoque)
+    public async Task AddAsync(ProdutoEstoque estoqueProduto, CancellationToken cancellationToken = default)
     {
-        _context.ProdutoEstoque.Update(estoque);
-        return Task.CompletedTask;
+        if (estoqueProduto == null)
+            throw new ArgumentNullException(nameof(estoqueProduto));
+
+        await _context.ProdutoEstoque.AddAsync(estoqueProduto, cancellationToken);
     }
 
-    public async Task SaveChangesAsync()
+    public async Task UpdateAsync(ProdutoEstoque estoqueProduto, CancellationToken cancellationToken = default)
     {
-        await _context.SaveChangesAsync();
+        if (estoqueProduto == null)
+            throw new ArgumentNullException(nameof(estoqueProduto));
+
+        _context.ProdutoEstoque.Update(estoqueProduto);
+        await Task.CompletedTask;
     }
 
-    public async Task ExpireReservasAsync()
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task ExpireReservasAsync(CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
 
@@ -68,8 +77,9 @@ public class EstoqueRepository : IEstoqueRepository
                 x.ReservaExpiraEmUtc < now)
             .ExecuteUpdateAsync(x =>
                 x.SetProperty(p => p.QuantidadeDisponivel,
-                    p => p.QuantidadeDisponivel + p.QuantidadeReservada)
+                              p => p.QuantidadeDisponivel + p.QuantidadeReservada)
                  .SetProperty(p => p.QuantidadeReservada, 0)
-                 .SetProperty(p => p.ReservaExpiraEmUtc, (DateTime?)null));
+                 .SetProperty(p => p.ReservaExpiraEmUtc, (DateTime?)null),
+                cancellationToken);
     }
 }

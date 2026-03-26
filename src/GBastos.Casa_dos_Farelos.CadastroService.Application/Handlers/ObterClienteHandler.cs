@@ -1,9 +1,9 @@
 ﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.DTOs;
-using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ListarClientes;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ObterCliente;
 using GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.Interfaces;
 using MediatR;
 
-namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.Handlers;
+namespace GBastos.Casa_dos_Farelos.CadastroService.Application.Handlers;
 
 public sealed class ObterClienteHandler
     : IRequestHandler<ObterClienteQuery, ClienteDto?>

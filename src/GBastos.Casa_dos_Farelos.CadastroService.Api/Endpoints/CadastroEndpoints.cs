@@ -3,8 +3,9 @@ using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.Atu
 using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.CriarCliente;
 using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.RemoverCliente;
 using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Veiculos;
-using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ListarClientes;
 using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ObterCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Veiculos.ListarVeiculo;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Veiculos.ObterVeiculo;
 using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
@@ -95,6 +96,7 @@ public static class CadastroEndpoints
         var command = new AtualizarClienteCommand(
             id,
             request.Nome,
+            request.Telefone,
             request.Email);
 
         await mediator.Send(command, ct);

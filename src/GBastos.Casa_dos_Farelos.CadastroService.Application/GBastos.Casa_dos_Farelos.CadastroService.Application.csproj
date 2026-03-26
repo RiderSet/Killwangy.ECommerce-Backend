@@ -15,7 +15,6 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,10 +22,6 @@
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging\GBastos.Casa_dos_Farelos.BuildingBlocks.Messaging.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
     <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure\GBastos.Casa_dos_Farelos.CadastroService.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Request\" />
   </ItemGroup>
 
 </Project>

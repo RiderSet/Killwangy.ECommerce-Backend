@@ -123,6 +123,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.Fa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure", "src\GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure\GBastos.Casa_dos_Farelos.FaturamentoService.Infrastructure.csproj", "{78E35CE8-B9B1-43E1-8F67-1AEE3572AAE2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GBastos.Casa_dos_Farelos.BuildingBlocks.Mapping", "src\GBastos.Casa_dos_Farelos.BuildingBlocks.Mapping\GBastos.Casa_dos_Farelos.BuildingBlocks.Mapping.csproj", "{34C072B6-F442-4749-AFB3-61AAA92F7C4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -305,6 +307,10 @@ Global
 		{78E35CE8-B9B1-43E1-8F67-1AEE3572AAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78E35CE8-B9B1-43E1-8F67-1AEE3572AAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78E35CE8-B9B1-43E1-8F67-1AEE3572AAE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34C072B6-F442-4749-AFB3-61AAA92F7C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34C072B6-F442-4749-AFB3-61AAA92F7C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34C072B6-F442-4749-AFB3-61AAA92F7C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34C072B6-F442-4749-AFB3-61AAA92F7C4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -367,6 +373,7 @@ Global
 		{664D90DA-14B0-4BD5-BF85-9962036E2CA0} = {72E904EB-6EDF-454C-9F8E-2D38C7B30098}
 		{8A364266-8BC5-43C3-9012-AB5C7C63870F} = {72E904EB-6EDF-454C-9F8E-2D38C7B30098}
 		{78E35CE8-B9B1-43E1-8F67-1AEE3572AAE2} = {72E904EB-6EDF-454C-9F8E-2D38C7B30098}
+		{34C072B6-F442-4749-AFB3-61AAA92F7C4D} = {2B9FAF82-B763-42D3-AD6E-FFDFBA399F6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {992DBE31-3975-449F-816E-E75F9D0FCC7C}

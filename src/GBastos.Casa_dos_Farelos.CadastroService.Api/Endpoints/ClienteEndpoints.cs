@@ -1,4 +1,8 @@
-﻿using MediatR;
+﻿using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.AtualizarCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.CriarCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Commands.Clientes.RemoverCliente;
+using GBastos.Casa_dos_Farelos.CadastroService.Application.Queries.Clientes.ObterCliente;
+using MediatR;
 
 namespace GBastos.Casa_dos_Farelos.CadastroService.Api.Endpoints;
 

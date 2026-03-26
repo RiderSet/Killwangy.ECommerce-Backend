@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.CadastroService.Domain\GBastos.Casa_dos_Farelos.CadastroService.Domain.csproj" />
+    <ProjectReference Include="..\GBastos.Casa_dos_Farelos.EstoqueService.Application\GBastos.Casa_dos_Farelos.EstoqueService.Application.csproj" />
+  </ItemGroup>
+
+</Project>

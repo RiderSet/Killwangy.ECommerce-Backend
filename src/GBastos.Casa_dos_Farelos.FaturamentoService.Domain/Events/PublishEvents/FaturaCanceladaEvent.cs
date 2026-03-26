@@ -10,8 +10,6 @@ public record FaturaCanceladaEvent(
     DateTime OccurredOnUtc
 ) : INotification
 {
-    private DateTime utcNow;
-
     public FaturaCanceladaEvent(Guid faturaId, string numero, string motivo)
         : this(
             faturaId,

@@ -42,7 +42,7 @@ public class Produto : AggregateRoot<Guid>
         AlterarNome(nome);
         AlterarDescricao(descricao);
         AlterarPreco(precoVenda);
-
+        AlterarPreco(precoCompra);
         CategoriaId = categoriaId;
         QuantEstoque = estoqueInicial;
 
@@ -199,6 +199,9 @@ public class Produto : AggregateRoot<Guid>
             throw new DomainException("Nome obrigatório.");
 
         if (PrecoVenda <= 0)
+            throw new DomainException("Preço inválido.");
+
+        if (PrecoCompra <= 0)
             throw new DomainException("Preço inválido.");
 
         if (QuantEstoque < 0)

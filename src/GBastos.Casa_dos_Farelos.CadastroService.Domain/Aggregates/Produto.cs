@@ -9,6 +9,7 @@ public class Produto : AggregateRoot<Guid>
     public string Nome { get; private set; } = null!;
     public string DescricaoProduto { get; private set; } = null!;
     public decimal PrecoVenda { get; private set; }
+    public decimal PrecoCompra { get; private set; }
     public int QuantEstoque { get; private set; }
     public Guid CategoriaId { get; private set; }
 
@@ -28,6 +29,7 @@ public class Produto : AggregateRoot<Guid>
         string nome,
         string descricaoProduto,
         decimal precoVenda,
+        decimal precoCompra,
         int quantEstoque,
         Guid categoriaId) : base(id)
     {
@@ -43,6 +45,9 @@ public class Produto : AggregateRoot<Guid>
         if (precoVenda < 0)
             throw new DomainException("Preço de venda não pode ser negativo.");
 
+        if (precoCompra < 0)
+            throw new DomainException("Preço de compra não pode ser negativo.");
+
         if (quantEstoque < 0)
             throw new DomainException("Quantidade em estoque não pode ser negativa.");
 
@@ -52,6 +57,7 @@ public class Produto : AggregateRoot<Guid>
         Nome = nome;
         DescricaoProduto = descricaoProduto;
         PrecoVenda = precoVenda;
+        PrecoCompra = precoCompra;
         QuantEstoque = quantEstoque;
         CategoriaId = categoriaId;
 
@@ -62,10 +68,11 @@ public class Produto : AggregateRoot<Guid>
         string nome,
         string descricaoProduto,
         decimal precoVenda,
+        decimal precoCompra,
         int quantEstoque,
         Guid categoriaId)
     {
-        return new Produto(Guid.NewGuid(), nome, descricaoProduto, precoVenda, quantEstoque, categoriaId);
+        return new Produto(Guid.NewGuid(), nome, descricaoProduto, precoVenda, precoCompra, quantEstoque, categoriaId);
     }
 
     protected override void ValidateInvariants()

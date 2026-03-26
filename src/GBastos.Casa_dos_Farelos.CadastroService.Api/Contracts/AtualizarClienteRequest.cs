@@ -2,4 +2,5 @@
 
 public record AtualizarClienteRequest(
     string Nome,
+    string Telefone,
     string Email);

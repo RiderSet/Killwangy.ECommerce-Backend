@@ -21,7 +21,7 @@ public static class VeiculoEndpoints
         app.MapPost("/veiculos", async (CriarVeiculoCommand command, IMediator mediator) =>
         {
             await mediator.Send(command);
-            return Results.Created($"/veiculos/{command.Id}", command);
+            return Results.Created($"/veiculos/{command.Placa}", command);
         });
 
         // Atualizar veículo

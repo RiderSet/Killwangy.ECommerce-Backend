@@ -7,4 +7,13 @@ public record MarcarFaturaComoPagaCommand(
     Guid FaturaId,
     DateTime DataPagamento,
     string IdempotencyKey
-) : IIdempotentCommand<Unit>;
+) : IIdempotentCommand<Unit>
+{
+    public MarcarFaturaComoPagaCommand(Guid faturaId)
+        : this(
+            faturaId,
+            DateTime.UtcNow,
+            $"marcar-fatura-paga-{faturaId}-{Guid.NewGuid()}")
+    {
+    }
+}

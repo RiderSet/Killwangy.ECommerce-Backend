@@ -1,4 +1,4 @@
-﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Primitives;
+﻿using GBastos.Casa_dos_Farelos.BuildingBlocks.SharedKernel.Common;
 using GBastos.Casa_dos_Farelos.EstoqueService.Application.Enums;
 using MediatR;
 
@@ -8,4 +8,4 @@ public record AjustarEstoqueCommand(
     Guid ProdutoId,
     int Quantidade,
     TipoAjusteEstoque Tipo
-) : IRequest<Result>;
+) : IRequest<Result<Guid>>;

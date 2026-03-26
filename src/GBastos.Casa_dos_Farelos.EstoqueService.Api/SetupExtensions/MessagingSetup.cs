@@ -12,7 +12,12 @@ public static class MessagingSetup
 
             x.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host("rabbitmq://localhost");
+                cfg.Host("localhost", "/", h =>
+                {
+                    h.Username("guest");
+                    h.Password("guest");
+                });
+
                 cfg.ConfigureEndpoints(ctx);
             });
         });

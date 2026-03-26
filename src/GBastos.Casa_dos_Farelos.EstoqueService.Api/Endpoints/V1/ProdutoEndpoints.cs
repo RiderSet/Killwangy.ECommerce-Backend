@@ -1,6 +1,7 @@
 ﻿using GBastos.Casa_dos_Farelos.EstoqueService.Application.Commands;
+using GBastos.Casa_dos_Farelos.EstoqueService.Application.Enums;
 using GBastos.Casa_dos_Farelos.EstoqueService.Application.Queries.Produtos;
-using MassTransit.Mediator;
+using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace GBastos.Casa_dos_Farelos.EstoqueService.Api.Endpoints.V1;
@@ -11,22 +12,18 @@ public static class ProdutoEndpoints
     {
         var group = app.MapGroup("/api/v1/produtos").WithTags("Produtos");
 
-        // CRUD
         group.MapPost("/", CriarProduto);
         group.MapGet("/{id:guid}", ObterProduto);
         group.MapGet("/", ListarProdutos);
         group.MapPut("/{id:guid}", AtualizarProduto);
         group.MapDelete("/{id:guid}", RemoverProduto);
 
-        // Status
         group.MapPatch("/{id:guid}/ativar", AtivarProduto);
         group.MapPatch("/{id:guid}/desativar", DesativarProduto);
 
-        // Estoque
         group.MapPost("/{id:guid}/estoque/adicionar", AdicionarEstoque);
         group.MapPost("/{id:guid}/estoque/remover", RemoverEstoque);
 
-        // Reserva
         group.MapPost("/{id:guid}/reservar", ReservarProduto);
         group.MapPost("/reservas/{reservaId:guid}/confirmar", ConfirmarReserva);
         group.MapPost("/reservas/{reservaId:guid}/cancelar", CancelarReserva);
@@ -37,6 +34,7 @@ public static class ProdutoEndpoints
     static async Task<IResult> CriarProduto(HttpContext http, CriarProdutoCommand cmd, IMediator mediator)
     {
         var idempotencyKey = http.Request.Headers.TryGetValue("Idempotency-Key", out var key) ? key.ToString() : null;
+
         var cmdComIdempotency = cmd with { IdempotencyKey = idempotencyKey };
 
         var result = await mediator.Send(cmdComIdempotency);
@@ -50,6 +48,7 @@ public static class ProdutoEndpoints
     {
         var cacheKey = $"produto:{id}";
         var cached = await cache.GetStringAsync(cacheKey);
+
         if (!string.IsNullOrEmpty(cached))
             return Results.Content(cached, "application/json");
 
@@ -65,15 +64,22 @@ public static class ProdutoEndpoints
 
     static async Task<IResult> AtualizarProduto(Guid id, AtualizarProdutoCommand cmd, IMediator mediator)
     {
-        cmd.Id = id;
-        var result = await mediator.Send(cmd);
-        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
+        var command = cmd with { Id = id };
+
+        var result = await mediator.Send(command);
+
+        return result.Success
+            ? Results.NoContent()
+            : Results.Problem(result.Error);
     }
 
     static async Task<IResult> RemoverProduto(Guid id, IMediator mediator)
     {
         var result = await mediator.Send(new RemoverProdutoCommand(id));
-        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
+
+        return result.Success
+            ? Results.NoContent()
+            : Results.Problem(result.Error);
     }
 
     // ================= STATUS =================
@@ -81,53 +87,91 @@ public static class ProdutoEndpoints
     static async Task<IResult> AtivarProduto(Guid id, IMediator mediator)
     {
         var result = await mediator.Send(new AtivarProdutoCommand(id));
-        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
+
+        return result.Success
+            ? Results.NoContent()
+            : Results.Problem(result.Error);
     }
 
     static async Task<IResult> DesativarProduto(Guid id, IMediator mediator)
     {
         var result = await mediator.Send(new DesativarProdutoCommand(id));
-        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
+
+        return result.Success
+            ? Results.NoContent()
+            : Results.Problem(result.Error);
     }
 
     // ================= ESTOQUE =================
 
     static async Task<IResult> AdicionarEstoque(Guid id, AjustarEstoqueCommand cmd, IMediator mediator)
     {
-        cmd.ProdutoId = id;
-        cmd.Tipo = TipoAjusteEstoque.Entrada;
+        var command = cmd with
+        {
+            ProdutoId = id,
+            Tipo = TipoAjusteEstoque.Entrada
+        };
 
-        var result = await mediator.Send(cmd);
-        return result.Success ? Results.Ok(result) : Results.Problem(result.Error);
+        var result = await mediator.Send(command);
+
+        return result.Success
+            ? Results.Ok(result)
+            : Results.Problem(result.Error);
     }
 
     static async Task<IResult> RemoverEstoque(Guid id, AjustarEstoqueCommand cmd, IMediator mediator)
     {
-        cmd.ProdutoId = id;
-        cmd.Tipo = TipoAjusteEstoque.Saida;
+        var command = cmd with
+        {
+            ProdutoId = id,
+            Tipo = TipoAjusteEstoque.Saida
+        };
 
-        var result = await mediator.Send(cmd);
-        return result.Success ? Results.Ok(result) : Results.Problem(result.Error);
+        var result = await mediator.Send(command);
+
+        return result.Success
+            ? Results.Ok(result)
+            : Results.Problem(result.Error);
     }
 
     // ================= RESERVA =================
 
     static async Task<IResult> ReservarProduto(Guid id, ReservarProdutoCommand cmd, IMediator mediator)
     {
-        cmd.ProdutoId = id;
-        var result = await mediator.Send(cmd);
-        return result.Success ? Results.Ok(result) : Results.Problem(result.Error);
+        var command = cmd with { ProdutoId = id };
+
+        var result = await mediator.Send(command);
+
+        return result.Success
+            ? Results.Ok(result)
+            : Results.Problem(result.Error);
     }
 
-    static async Task<IResult> ConfirmarReserva(Guid reservaId, IMediator mediator)
+    static async Task<IResult> ConfirmarReserva(
+        HttpContext http,
+        Guid reservaId,
+        IMediator mediator)
     {
-        var result = await mediator.Send(new ConfirmarReservaCommand(reservaId));
-        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
+        var key = http.Request.Headers["Idempotency-Key"].FirstOrDefault()
+                  ?? Guid.NewGuid().ToString();
+
+        var result = await mediator.Send(
+            new ConfirmarReservaCommand(reservaId, key)
+        );
+
+        return result
+            ? Results.NoContent()
+            : Results.Problem("Erro ao confirmar reserva");
     }
 
     static async Task<IResult> CancelarReserva(Guid reservaId, IMediator mediator)
     {
-        var result = await mediator.Send(new CancelarReservaCommand(reservaId));
-        return result.Success ? Results.NoContent() : Results.Problem(result.Error);
+        var result = await mediator.Send(
+            new CancelarReservaCommand(reservaId)
+        );
+
+        return result.Success
+            ? Results.NoContent()
+            : Results.Problem(result.Error);
     }
 }

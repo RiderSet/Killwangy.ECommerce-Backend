@@ -7,4 +7,10 @@ namespace GBastos.Casa_dos_Farelos.FaturamentoService.Application.Commands.Cance
 public record DeletarFaturaCommand(
     Guid Id,
     string IdempotencyKey
-) : IIdempotentCommand<Unit>;
+) : IIdempotentCommand<Unit>
+{
+    public DeletarFaturaCommand(Guid id)
+        : this(id, $"delete-fatura-{id}-{Guid.NewGuid()}")
+    {
+    }
+}

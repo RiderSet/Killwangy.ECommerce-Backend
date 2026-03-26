@@ -14,8 +14,11 @@ public readonly struct Result<T>
     }
 
     public static Result<T> Ok(T data)
-        => new(true, data, null);
+        => new Result<T>(true, data, null);
 
     public static Result<T> Fail(string error)
-        => new(false, default, error);
+        => new Result<T>(false, default, error);
+
+    public static Result<Guid> OkGuid(Guid id)
+        => Result<Guid>.Ok(id);
 }
